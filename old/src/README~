@@ -1,0 +1,90 @@
+TPTEST 5 README
+
+This document describes how to build TPTEST 5 on Windows or Mac OSX.
+
+You need the following installed to be able to build and run TPTEST5:
+
+- wxWidgets 2.8.0 or newer (called wxMac on the Mac). 
+- curl 7.16 or newer.
+- gd 2.0.33 or newer.
+
+And of course you need the source or the developement packets to be
+able to compile.
+
+Notes on building dependencies:
+Configure Curl:
+./configure --without-ssl --without-zlib --without-gnutls --without-gssapi --without-libssh2 --without-spnego --without-ares --without-libidn --enable-shared=no --disable-ldaps --disable-ldap --disable-ipv6
+
+Configure GD2:
+./configure --enable-shared=no
+
+Configure wxWidgets
+--enable-unicode --disable-shared
+
+
+
+Mac OSX : Howto compile
+-----------------------
+
+Curl and GD have these extra flagsa if you're building on 10.6 and want backwards compatibility:
+
+
+wxMac have these extra flags to configure if you're building on 10.6 and want backwards compatibility:
+ --with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk/ --with-macosx-version-min=10.5
+
+The easiest way to compile on Mac OSX is to use the command line
+tools GCC 4.
+
+-- Step by step build
+
+1. Install the dependencys described above.
+
+2. Go to the directory tptest5/src and run the command ./configure, this
+will create the Makefile for you. 
+
+3. Run the commands wx-config --cppflags and wx-config --libs. The
+wx-config binary is created when you build wxMac.
+
+4. Edit the TPTEST5 Makefile (located in tptest5/src) as follows:
+  - Replace the value of WXCPPFLAGS to the output of 
+    "wx-config --cppflags"
+  - Replace the value of WXLDFLAGS to the output of 
+    "wx-config --libs"
+  - Change the value of INCL and LIBS so that your version of curl and
+  gd is found.
+
+5. Run make
+
+Your binary should now be located in tptest/src/tptest5.app/Contents/MacOSX. 
+This is a Mac OSX application bundle so the .app directory should show
+up as a program in your Finder.
+
+6.
+
+hdiutil create TPTEST_502b.dmg -volname "TPTEST 5.02b" -fs HFS+ -srcfolder dmg/
+
+
+Windows : Howto compile
+-----------------------
+
+User Visual C++ 2003 or newer.
+
+-- Step by step build
+
+1. Install dependencys. Build the Unicode Release (not DLL) of
+wxWidgets.
+
+2. Go to the directory tptest5/src and open the tptest5.sln file in
+Visual C++.
+
+3. Edit the Project Settings so that the net project finds curl, the
+graph project finds gd and the TPTest5 project finds wxWidgets.
+
+4. Build in Visual C++.
+
+Make sure that the tptest5 executable can find the DLL's it needs. The easiest solution is to copy them into the same folder as you are running the executable from (current working directory). This means the project directory if you are debugging with VC++.
+
+---
+
+
+

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+##
+## A very simple configure script
+##
+
+OK=0
+echo -n "Checking operating system name... "
+OSTYPE=`uname -s`
+echo $OSTYPE
+
+
+## Copy Makefile
+cp "Makefile.$OSTYPE" Makefile
+cd net && cp "Makefile.$OSTYPE" Makefile && cd ..
+cd graph && cp "Makefile.$OSTYPE" Makefile && cd ..
+

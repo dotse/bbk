@@ -1,0 +1,81 @@
+#CPP		= /opt/local/bin/gcc-dp-3.4
+#LINKER		= /opt/local/bin/gcc-dp-3.4
+CC		= g++
+CPP 		= g++
+LINKER 		= g++
+#CDEBUG		= -g
+
+#Edit this to the location of your curl and gd includes.
+INCL		= -I /Developer/SDKs/MacOSX10.4u.sdk/usr/include/ -I /Developer/SDKs/MacOSX10.4u.sdk/usr/include/curl
+
+WXCPPFLAGS	= -DUNIX -DMACOSX -I/Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/wx/include/mac-unicode-release-static-2.8 -I/Users/ragnarlonn/wxMac-2.8.0/include -I/Users/ragnarlonn/wxMac-2.8.0/contrib/include -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXMAC__
+
+
+WXLDFLAGS	= -L/Users/ragnarlonn/wxMac-2.8.0/osx-build/lib -isysroot /Developer/SDKs/MacOSX10.4u.sdk -framework QuickTime -framework IOKit -framework Carbon -framework Cocoa -framework System  /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_aui-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_xrc-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_qa-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_html-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_adv-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_macu_core-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_base_carbonu_xml-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_base_carbonu_net-2.8.a /Users/ragnarlonn/wxMac-2.8.0/osx-build/lib/libwx_base_carbonu-2.8.a -lpng -framework WebKit -lwxregexu-2.8 -lwxexpat-2.8 -lwxtiff-2.8 -lwxjpeg-2.8 -lz -lpthread -liconv
+
+CPPFLAGS	= ${CDEBUG} -DSWEDISH ${WXCPPFLAGS} ${INCL} -I net -I graph -Wall -finput-charset=ISO-8859-1
+LDFLAGS		= ${CDEBUG} $(WXLDFLAGS)  -Lnet -Lgraph -ltptest-graph -ltptest-net
+
+#Edit this to the location of your curl and gd lib.
+LIBS		=  -L/usr/local/lib -L/Developer//SDKs/MacOSX10.4u.sdk/usr/lib -lcurl -lgd
+
+#OSInfo.o 
+OBJS		= \
+ReportDialog.o \
+TcpWindowSize.o \
+ToolsPanel.o \
+TPTestPanel.o \
+IFConfigPanel.o \
+TraceroutePanel.o \
+AdvancedModePanel.o \
+AvailabilityDetail.o \
+AvailabilityModePanel.o \
+RTTPacketLossDetail.o \
+RTTPacketlossModePanel.o \
+ThroughputDetail.o \
+ThroughputModePanel.o \
+AppConfig.o \
+DialogAbout.o \
+GraphPanel.o \
+HistorySettingDialog.o \
+Lists.o \
+MainFrame.o \
+RepeatDialog.o \
+Result.o \
+ResultLog.o \
+Server.o \
+ServerListDialog.o \
+SimpleModePanel.o \
+TestDetailDialog.o \
+TestMarshall.o \
+TestPanel.o \
+NetstatPanel.o \
+PingPanel.o \
+main.o
+
+
+
+all: tptest5
+
+tptest5: ${OBJS}
+	mkdir -p tptest5.app/Contents/MacOS
+	mkdir -p tptest5.app/Contents/Resources
+	mkdir -p tptest5.app/Contents/Frameworks
+	mkdir -p tptest5.app/Contents/PlugIns
+	cp start.jpg tptest5.app/Contents/Resources
+	cp skapa-felrapport.jpg tptest5.app/Contents/Resources
+	cp tptest-result-list.jpg tptest5.app/Contents/Resources
+	cp trend-colorpoint.jpg tptest5.app/Contents/Resources
+	cp help.html tptest5.app/Contents/Resources
+	cd graph && make && cd ..
+	cd net && make && cd ..
+	${CC} ${LDFLAGS} -o tptest5.app/Contents/MacOS/tptest5 ${OBJS} ${LIBDIR} ${LIBS}
+
+clean:
+	cd graph && make clean && cd ..
+	cd net && make clean && cd ..
+	rm -rf tptest5.app core *.o *.BAK *.bak *.CKP a.out
+
+install:
+	install -c -s -o bin -g bin -m 555 tptest5 /usr/local/bin
+
