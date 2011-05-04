@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TPTest5", "TPTest5.vcproj", "{05E08C8A-5AAA-4723-9BB0-886F2F32EA89}"
+	ProjectSection(ProjectDependencies) = postProject
+		{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA} = {93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}
+		{5458C9F7-3012-4576-8166-BC9A26E1631F} = {5458C9F7-3012-4576-8166-BC9A26E1631F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "net", "net\net.vcproj", "{5458C9F7-3012-4576-8166-BC9A26E1631F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "graph", "graph\graph.vcproj", "{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug Unicode = Debug Unicode
+		Release Unicode = Release Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{05E08C8A-5AAA-4723-9BB0-886F2F32EA89}.Debug Unicode.ActiveCfg = Debug|Win32
+		{05E08C8A-5AAA-4723-9BB0-886F2F32EA89}.Debug Unicode.Build.0 = Debug|Win32
+		{05E08C8A-5AAA-4723-9BB0-886F2F32EA89}.Release Unicode.ActiveCfg = Release|Win32
+		{05E08C8A-5AAA-4723-9BB0-886F2F32EA89}.Release Unicode.Build.0 = Release|Win32
+		{5458C9F7-3012-4576-8166-BC9A26E1631F}.Debug Unicode.ActiveCfg = Debug|Win32
+		{5458C9F7-3012-4576-8166-BC9A26E1631F}.Debug Unicode.Build.0 = Debug|Win32
+		{5458C9F7-3012-4576-8166-BC9A26E1631F}.Release Unicode.ActiveCfg = Release|Win32
+		{5458C9F7-3012-4576-8166-BC9A26E1631F}.Release Unicode.Build.0 = Release|Win32
+		{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}.Debug Unicode.ActiveCfg = Debug|Win32
+		{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}.Debug Unicode.Build.0 = Debug|Win32
+		{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}.Release Unicode.ActiveCfg = Release|Win32
+		{93D81D27-0BE4-45D8-B0B7-3BCDE9E4DFFA}.Release Unicode.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,510 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TPTEST2             ICON                    "tptest3.ICO"
+IDI_SMALL               ICON                    "SMALL.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_TPTEST2 MENU 
+BEGIN
+    POPUP "&Arkiv"
+    BEGIN
+        MENUITEM "Avsluta",                     IDM_EXIT
+        MENUITEM "Avancerat",                   IDM_ADVANCED
+        MENUITEM "Skriv ut testresultat",       IDM_PRINTREPORT
+    END
+    POPUP "&Hjälp"
+    BEGIN
+        MENUITEM "&Om TPTEST ...",              IDM_ABOUT
+        MENUITEM "&Kontaktinfo",                IDM_INFO
+        MENUITEM "Bruksanvisning",              IDM_HJALP
+    END
+END
+
+IDC_TPTEST3 MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDM_EXIT
+        MENUITEM "Print test results",          IDM_PRINTREPORT
+        MENUITEM "Advanced mode",               IDM_ADVANCED
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...",                  IDM_ABOUT
+        MENUITEM "&Contact Info",               IDM_INFO
+        MENUITEM "Usage Manual",                IDM_HJALP
+    END
+END
+
+IDC_TPTEST4 MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDM_EXIT
+        MENUITEM "Print test results",          IDM_PRINTREPORT
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...",                  IDM_ABOUT
+        MENUITEM "&Contact Info",               IDM_INFO
+        MENUITEM "Usage Manual",                IDM_HJALP
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_TPTEST2 ACCELERATORS 
+BEGIN
+    "?",            IDM_ABOUT,              ASCII,  ALT
+    "/",            IDM_ABOUT,              ASCII,  ALT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 22, 17, 297, 242
+STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "Om TPTEST 3.1"
+FONT 8, "System", 0, 0, 0x0
+BEGIN
+    ICON            IDI_TPTEST2,IDC_MYICON,14,9,20,20
+    DEFPUSHBUTTON   "OK",IDOK,241,5,45,19,WS_GROUP
+    EDITTEXT        IDC_EDIT1,14,33,273,199,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    LTEXT           "",IDC_VERSION,44,10,185,8,SS_NOPREFIX
+END
+
+IDD_ABOUTBOX1 DIALOGEX 22, 17, 297, 247
+STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About TPTEST 3.1"
+FONT 8, "System", 0, 0, 0x0
+BEGIN
+    ICON            IDI_TPTEST2,IDC_MYICON,14,9,20,20
+    DEFPUSHBUTTON   "OK",IDOK,241,5,45,19,WS_GROUP
+    EDITTEXT        IDC_EDIT1,14,29,273,208,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    LTEXT           "",IDC_VERSION,44,10,187,8,SS_NOPREFIX
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""resource.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        RIGHTMARGIN, 295
+        BOTTOMMARGIN, 232
+    END
+
+    IDD_ABOUTBOX1, DIALOG
+    BEGIN
+        RIGHTMARGIN, 295
+        BOTTOMMARGIN, 237
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "tptest2"
+    IDS_UDPPORT             "1632"
+    IDC_TPTEST2             "TPTEST2"
+    IDS_STRING110           "IT-kommissionen, IP Performance Sverige AB, Autonomica AB eller Netnod Internet Exchange AB ansvarar inte för att de testresultat som levereras av TPTEST är korrekta. IT-kommissionen, IP Performance Sverige AB, Autonomica AB eller Netnod Internet Exchange AB ansvarar inte för driftsäkerhet och tillgänglighet avseende mätservrar eller masterserver, och inte heller för att TPTEST fortlöpande finns tillgängligt, för att det fortlöpande finns användarstöd eller för uppdateringar av programmet.Varje användare ansvarar själv för att programmet är korrekt konfigurerat för den egna datorn. IT-kommissionen, IP Performance Sverige AB, Autonomica AB eller Netnod Internet Exchange AB tar inte ansvar för klientprogrammets funktion i den individuella driftmiljön eller för fel som programmet orsakar i operativsystem, andra applikationer eller hårdvara, inte heller för skada som användaren orsakar på andra datorer genom användningen av TPTEST.Beskrivning av programmet TPTEST\r\n""\\"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Swedish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SVE)
+#ifdef _WIN32
+LANGUAGE LANG_SWEDISH, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG5 DIALOG  0, 0, 334, 314
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "TPTEST 3.0 Hjälp"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,277,293,50,14
+    EDITTEXT        IDC_EDIT1,7,7,320,278,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL
+END
+
+IDD_ADVANCED DIALOGEX 20, 20, 405, 240
+STYLE DS_ABSALIGN | DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "TPTEST 3.1 Advanced Mode"
+MENU IDC_TPTEST4
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_PROGRESS,7,221,391,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    WS_DISABLED
+    LISTBOX         IDC_SERVERLIST,44,53,145,20,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Server:",IDC_STATIC,17,56,23,10
+    CONTROL         "Send",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,141,96,32,
+                    13
+    CTEXT           "Server",IDC_STATIC,14,74,28,10
+    CTEXT           "Adress:",IDC_STATIC,14,82,29,10
+    CONTROL         "Receive",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,141,106,
+                    42,13
+    CONTROL         "Full duplex",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,141,
+                    116,50,12
+    LTEXT           "Datarate (bits per second)",IDC_STATIC,13,201,88,12,
+                    SS_CENTERIMAGE
+    LTEXT           "Packet size (bytes)",IDC_STATIC,13,188,88,12,
+                    SS_CENTERIMAGE
+    LTEXT           "Packets per second",IDC_STATIC,13,175,84,12,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_UDPPPS,102,175,48,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Test time (seconds)",IDC_STATIC,13,116,64,12,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_TIME,80,116,48,12,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_UDPSIZE,102,188,48,12,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_UDPBITRATE,102,201,48,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "TCP Bytes to transfer",IDC_STATIC,13,143,87,12,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_TCPBYTES,101,143,48,12,ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "UDP Test",IDC_STATIC,7,167,191,50
+    GROUPBOX        "TCP Test",IDC_STATIC,7,135,191,26
+    CTEXT           ":",IDC_STATIC,155,76,8,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_SERVERNAME,44,78,112,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SERVERPORT,163,78,30,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Start",IDC_UDPSTART,154,184,40,19
+    PUSHBUTTON      "Start",IDC_TCPSTART,153,142,40,14
+    CTEXT           "Master",IDC_STATIC,14,15,28,8
+    CTEXT           "Server",IDC_STATIC,13,22,29,8
+    CTEXT           ":",IDC_STATIC,155,17,8,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_MASTER,43,17,112,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MASTERPORT,162,17,28,12,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "Refresh server list",IDC_REFRESH,63,33,85,15
+    CTEXT           "Results",IDC_HEADER,202,7,196,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_DISPLAY,202,17,196,199,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL
+END
+
+IDD_STANDARD DIALOGEX 20, 20, 405, 251
+STYLE DS_ABSALIGN | DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "TPTEST 3.1 Enkelt läge"
+MENU IDC_TPTEST2
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_PROGRESS2,7,232,391,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    WS_DISABLED
+    GROUPBOX        "Vad vill du testa?",IDC_STATIC,7,93,162,134
+    LISTBOX         IDC_SERVERLIST,34,107,127,22,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Server:",IDC_STATIC,10,108,23,10
+    CONTROL         "Testa sändning och mottagning",IDC_RADIO1,"Button",
+                    BS_AUTORADIOBUTTON,25,158,117,13
+    CONTROL         "Testa enbart sändning",IDC_RADIO2,"Button",
+                    BS_AUTORADIOBUTTON,25,172,117,12
+    CONTROL         "Testa enbart mottagning",IDC_RADIO3,"Button",
+                    BS_AUTORADIOBUTTON,25,185,117,13
+    PUSHBUTTON      "Starta",IDC_START,119,202,42,17
+    PUSHBUTTON      "Starta standardtest",IDC_STANDARDTEST,39,57,103,27
+    GROUPBOX        "Resultat",IDC_STATIC,175,55,223,172
+    GROUPBOX        "Tillgänglig bandbredd",IDC_STATIC,179,189,216,34
+    CTEXT           "",IDC_SENDLOAD,275,200,33,15,SS_CENTERIMAGE | SS_SUNKEN
+    GROUPBOX        "UDP",IDC_STATIC,289,70,106,115
+    CTEXT           "",IDC_UDPINFO,293,89,95,10
+    CTEXT           "",IDC_UDPSPEED,307,102,68,15,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "Högsta uppnådda hastighet",IDC_STATIC,294,127,93,10
+    CTEXT           "",IDC_UDPSEND,336,146,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "Sändning",IDC_STATIC,294,147,40,10
+    RTEXT           "Mottagning",IDC_STATIC,294,166,40,10
+    CTEXT           "",IDC_UDPRCV,336,164,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    GROUPBOX        "TCP",IDC_STATIC,179,70,106,115
+    CTEXT           "",IDC_TCPINFO,183,89,97,10
+    CTEXT           "",IDC_TCPBYTES,197,102,68,15,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "Högsta uppnådda hastighet",IDC_STATIC,185,127,93,10
+    CTEXT           "",IDC_TCPSEND,229,146,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "Sändning",IDC_STATIC,185,147,40,10
+    RTEXT           "Mottagning",IDC_STATIC,185,165,40,10
+    CTEXT           "",IDC_TCPRCV,229,164,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    EDITTEXT        IDC_DISPLAY,7,7,391,41,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    CTEXT           "",IDC_SERVERNAME,39,135,121,13,SS_CENTERIMAGE | 
+                    SS_SUNKEN
+    CTEXT           "Server",IDC_STATIC,10,131,26,10
+    CTEXT           "Address:",IDC_STATIC,10,140,28,10
+    CTEXT           "Sändning",IDC_STATIC,240,202,34,10,SS_CENTERIMAGE
+    CTEXT           "Mottagning",IDC_STATIC,313,202,39,10,SS_CENTERIMAGE
+    CTEXT           "",IDC_RCVLOAD,353,200,32,15,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "TCP/UDP i %:",IDC_STATIC,184,203,50,10,SS_CENTERIMAGE
+END
+
+IDD_STANDARD5 DIALOGEX 20, 20, 405, 251
+STYLE DS_ABSALIGN | DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "TPTEST 3.1 Standard mode"
+MENU IDC_TPTEST3
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_PROGRESS2,7,232,391,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    WS_DISABLED
+    GROUPBOX        "Test settings",IDC_STATIC,7,93,162,134
+    LISTBOX         IDC_SERVERLIST,34,107,127,22,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Server:",IDC_STATIC,10,108,23,10
+    CONTROL         "Send and receive test",IDC_RADIO1,"Button",
+                    BS_AUTORADIOBUTTON,25,158,117,13
+    CONTROL         "Send-only test",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,
+                    25,172,117,12
+    CONTROL         "Receive-only test",IDC_RADIO3,"Button",
+                    BS_AUTORADIOBUTTON,25,185,117,13
+    PUSHBUTTON      "Start test",IDC_START,119,202,42,17
+    PUSHBUTTON      "Start standardtest",IDC_STANDARDTEST,39,57,103,27
+    GROUPBOX        "Test results",IDC_STATIC,175,55,223,172
+    GROUPBOX        "Available bandwidth",IDC_STATIC,179,189,216,34
+    CTEXT           "",IDC_SENDLOAD,275,200,33,15,SS_CENTERIMAGE | SS_SUNKEN
+    GROUPBOX        "UDP",IDC_STATIC,289,70,106,115
+    CTEXT           "",IDC_UDPINFO,293,89,95,10
+    CTEXT           "",IDC_UDPSPEED,307,102,68,15,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "Maximum speed reached",IDC_STATIC,294,127,93,10
+    CTEXT           "",IDC_UDPSEND,336,146,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "Send",IDC_STATIC,294,147,40,10
+    RTEXT           "Receive",IDC_STATIC,294,166,40,10
+    CTEXT           "",IDC_UDPRCV,336,164,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    GROUPBOX        "TCP",IDC_STATIC,179,70,106,115
+    CTEXT           "",IDC_TCPINFO,183,89,97,10
+    CTEXT           "",IDC_TCPBYTES,197,102,68,15,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "Maximum speed reached",IDC_STATIC,185,127,93,10
+    CTEXT           "",IDC_TCPSEND,229,146,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "Send",IDC_STATIC,185,147,40,10
+    RTEXT           "Receive",IDC_STATIC,185,165,40,10
+    CTEXT           "",IDC_TCPRCV,229,164,48,13,SS_CENTERIMAGE | SS_SUNKEN
+    EDITTEXT        IDC_DISPLAY,7,7,391,41,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    CTEXT           "",IDC_SERVERNAME,39,135,121,13,SS_CENTERIMAGE | 
+                    SS_SUNKEN
+    CTEXT           "Server",IDC_STATIC,10,131,26,10
+    CTEXT           "Address:",IDC_STATIC,10,140,28,10
+    CTEXT           "Send",IDC_STATIC,240,202,34,10,SS_CENTERIMAGE
+    CTEXT           "Receive",IDC_STATIC,313,202,39,10,SS_CENTERIMAGE
+    CTEXT           "",IDC_RCVLOAD,353,200,32,15,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "TCP/UDP:",IDC_STATIC,184,203,50,10,SS_CENTERIMAGE
+END
+
+IDD_DIALOG6 DIALOG  0, 0, 334, 314
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "TPTEST 3.0 Help"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,277,293,50,14
+    EDITTEXT        IDC_EDIT1,7,7,320,278,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG5, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 327
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 307
+    END
+
+    IDD_ADVANCED, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 398
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 233
+    END
+
+    IDD_STANDARD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 398
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 244
+    END
+
+    IDD_STANDARD5, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 398
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 244
+    END
+
+    IDD_DIALOG6, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 327
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 307
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041d04b0"
+        BEGIN
+            VALUE "CompanyName", "Gatorhole"
+            VALUE "FileDescription", "tpv4b"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "tpv4b"
+            VALUE "LegalCopyright", "Copyright © 2002"
+            VALUE "OriginalFilename", "tpv4b.exe"
+            VALUE "ProductName", "Gatorhole tpv4b"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x41d, 1200
+    END
+END
+
+#endif    // Swedish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

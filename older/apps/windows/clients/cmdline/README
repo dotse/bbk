@@ -1,0 +1,20 @@
+$Id: README,v 1.5 2004/04/07 13:23:20 rlonn Exp $
+$Source: /cvsroot-fuse/tptest/apps/windows/clients/cmdline/README,v $
+
+
+To build a simple Unix TPTEST client, do:
+
+1. Make a project directory.
+
+2. Copy all the necessary files there. You'll need the engine files
+   from the engine/ directory. They are tpengine.c, tpengine.h, tpcommon.c
+   tpcommon.h, tpclient.c and tpclient.h. You'll also need the Unix I/O
+   module, tpio_unix.c and tpio_unix.h, which are found in the os-dep/unix/
+   directory. Finally you'll need all the files in this directory.
+
+3. Edit the Makefile so that it suits you.
+
+4. Build.
+
+
+

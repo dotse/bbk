@@ -1,0 +1,38 @@
+####################################################################
+# A #-character first on a line equals a comment. Note that partial
+# lines cannot be comments. Either the whole line is a comment, or
+# nothing at all on the line is a comment. And the # needs to be
+# in the first position of the line. It cannot be preceeded by e.g.
+# whitespace. Empty lines (or actually, lines shorter than 10
+# characters) are also ignored.
+# 
+# The masterserver sends each line exactly like it is written
+# here, but replaces the LF at the end with CR+LF
+#
+# Each line should contain a full server entry, with details
+# about the particular test server. The data is given as a
+# semicolon-delimited list in the form "var=value;var2=value2"
+#
+# The necessary variables to supply (along with valid values) are:
+# hostname=<FQDN or IP>
+# port=<server TCP control port>
+# info=<informational text string>
+# proto=<control protocol type>
+#
+# Example:
+# hostname is "host.mydomain.com" or "10.20.30.40"
+# port is "1640"
+# info is "My TPTEST Server"
+# proto is "TCP"
+#
+# Currently, only "TCP" is recognized as a valid proto.
+# info and proto are not required but at least info is recommended.
+
+#
+# A full line, using the above example values, would then be:
+####################################################################
+hostname=host.mydomain.com;port=1640;proto=TCP;info=My TPTEST Server
+
+#
+# This is the reference TPTEST server in Stockholm, Sweden
+hostname=referens.sth.ip-performance.se;port=1640;info=IP-Performance V3 Stockholm;proto=TCP

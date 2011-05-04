@@ -1,0 +1,11 @@
+TPTEST IO module changelog
+--------------------------
+
+
+Version 3.16:
+
+ - Added support for SO_SNDBUF/SO_RCVBUF settings to tpio_unix.c and tpio_win32.c
+   See engine/CHANGELOG and apps/CHANGELOG for more details. Note also that 
+   tpio_mac.c has no support for this feature yet.
+
+

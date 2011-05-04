@@ -1,0 +1,50 @@
+TPTEST applications changelog
+-----------------------------
+
+
+
+TPTEST 3.15:
+
+
+ - apps/unix/client
+
+   Rewritten client app. It now does TPTEST 3 and TPTEST 4. Can be run in
+   standalone, repeating mode (performing repeated tests) or via cron. It
+   can log its output to stdout or syslog and has 3 different verbosity
+   levels.
+
+   Requires a TPTEST 3.15 or later engine version.
+
+
+
+
+TPTEST 3.16:
+
+
+ - apps/unix/client
+
+   Added -S and -R options to enable the client to set socket send- and receive
+   buffers to other values than the default for the OS used.
+
+   Setting send- and receive buffers to a certain value on both client and
+   server side will result in a corresponding TCP window size being negotiated
+   between the machines when a test is run.
+
+
+
+
+TPTEST 3.17:
+
+ - apps/unix/client
+
+   Fixed two bugs in client.c that caused TPTEST/Stat results to not be
+   accepted by the TPTEST/Stat database. The first was engp->stats.email and 
+   engp->stats.pwd not being initialized, causing the client to transmit
+   result reports with those fields empty. The second bug was the client not
+   initializing engp->stats.MajorVersion and engp->stats.MinorVersion,
+   causing the client to report 0 (zero) for both those when sending stat
+   reports to the server. The program (dbinsert) responsible for inserting
+   test results into the database checks these version numbers and discards
+   test results that come with version numbers below 3.0.
+
+

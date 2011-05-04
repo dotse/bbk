@@ -1,0 +1,60 @@
+TPTEST engine changelog
+-----------------------
+
+
+Version 3.15:
+
+ - Modified TPEngine struct to include "UINT32 start_tcpsend_bytes" and 
+   "UINT32 start_tcprecv_bytes", which are used by tpclient.c:AdvanceTest() 
+   as start values for tcpBytes when doing TCP send and receive tests.
+   Previously, the values were a #define (START_TCP_BYTES).
+
+   This modification allows a (TPTEST/Statistik) client program to perform
+   auto-TCP tests more effectively.
+
+ - Added "char email[101]" and "char pwd[101]" to TPEngine struct.
+   (more TPTEST/Statistik support).
+
+ - Stat reports now include "email=x;pwd=y" also, no matter if email or
+   pwd exists/is used or not.
+
+ - New test modes supported by AdvanceTest(): 
+   M_TCP_AUTO, M_TCP_AUTO_SEND, M_TCP_AUTO_RECV
+
+
+Version 3.16:
+
+ - Added "int socket_sndbuf, socket_rcvbuf, cur_socket_sndbuf, cur_socket_rcvbuf"
+   to TPEngine struct. socket_sndbuf/socket_rcvbuf are used by the application
+   to tell the IO module that it would like certain SO_SNDBUF/SO_RCVBUF values
+   set for data sockets (only. The control socket will use default values for
+   SO_SNDBUF/SO_RCVBUF). If the IO module sees that these variables are non-zero
+   it should try to set the send- and receive buffers for new data sockets
+   accordingly. The IO module should also do a getsockopt() or similar, asking
+   for the actual SO_SNDBUF/SO_RCVBUF values used (after trying to set them) and 
+   store the results in cur_socket_rcvbuf/cur_socket_sndbuf. The application may
+   then determine what buffer settings were actually used for the test.
+
+   Note that data sockets aren't created by the engine until a test has been
+   initiated and test parameters have been negotiated between client and server.
+   This means that an application has to e.g. wait until the engine state is
+   "engp->state == CLSM_TESTLOOP" before checking what actual values for
+   SO_SNDBUF/SO_RCVBUF are used.
+
+   Also worth knowing is that SO_SNDBUF and SO_RCVBUF are used by most Unix-like
+   OS's to determine TCP window size. Setting both values to e.g. 65536 on both
+   the client and server side will cause the machines to negotiate that value
+   for the TCP window size when the data connection is set up in a TCP test.
+
+
+Version 3.18:
+
+ - Added "local_tcp_pr_start, local_tcp_pr_end, local_udp_pr_start, local_udp_pr_end"
+   to TPEngine struct. These variables are used by the I/O modules to allocate local
+   port number from a certain range for the local data sockets. 
+
+   Note that currently, only the Unix I/O module supports these variables so
+   a server using the Windows or MacOS I/O modules will not be able to use
+   the feature.
+
+

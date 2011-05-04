@@ -1,0 +1,4 @@
+referens.sth.ip-performance.se TCP 1632 "Reference server, Stockholm"
+some.server.net "Another server"
+123.45.67.89 TCP 7499 "A server on a different TCP port"
+

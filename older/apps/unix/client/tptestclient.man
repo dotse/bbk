@@ -1,0 +1,79 @@
+Usage: tptestclient [options] <-m mode> <parameters> <address> <port>
+
+options: <> = required argument, [] = optional argument
+  -b <local address>        Bind to local address/interface
+  -n <repetitions>          Repeat test n number of times (0 = infinite)
+  -v <verbosity>            Set verbosity level
+  -s <verbosity>            Set syslog verbosity level
+  -e <email>                Set email for TPTEST/Statistik
+  -p <password>             Set password for TPTEST/Statistik
+  -d <delaytime>            Set delaytime between repeated tests
+  -S <sendbuf size>         Try to set size of socket send buffer
+  -R <recvbuf size>         Try to set size of socket receive buffer
+  -t                        No text output
+
+test modes & parameters:
+  udp-send | us             UDP send to server
+    parameters: <testtime> <bitrate>
+    parameters: <testtime> <packetsize> <packets/sec>
+  udp-receive | ur          UDP receive from server
+    parameters: <testtime> <bitrate>
+    parameters: <testtime> <packetsize> <packets/sec>
+  udp-fdx | uf              UDP full duplex
+    parameters: <testtime> <bitrate>
+    parameters: <testtime> <packetsize> <packets/sec>
+  tcp-send | ts             TCP send to server
+    parameters: <max testtime> <bytes to send>
+  tcp-receive | tr          TCP receive from server
+    parameters: <max testtime> <bytes to receive>
+  tcp-send-auto | tsa       TCP auto send to server
+  tcp-receive-auto | tra    TCP auto receive from server
+  tcp-auto | ta             TCP auto (auto send + auto receive)
+
+
+
+Examples:
+
+1. Starting an infinitely repeating TPTEST/Statistik session with user "joe" 
+   and pw "xyz" to server "server.some.domain" on control port 1650 :
+
+    ./tptestclient -n0 -e joe -p xyz -m tcp-auto server.some.domain 1650
+
+
+2. Starting a one-time, 5-second UDP-Send test with packet size 1100 bytes
+   and packet rate 200 packets per second :
+
+    ./tptestclient -m udp-send 5 1100 200 server.some.domain 1650
+
+
+3. Starting three consecutive automatic (meaning they figure out the
+   amount of data to send to get a good test result) TCP-Send tests,
+   sending output both to stdout and to syslog at the highest verbosity
+   level :
+
+    ./tptestclient -n3 -v2 -s2 -m tcp-send-auto server.some.domain 1650
+
+
+
+Tips:
+
+  - "tcp-send-auto" can be abbreviated to "tsa". All the various modes
+    have abbreviations for the weaker typists out there
+
+  - For TPTEST/Statistik usage, the program will while running remember 
+    the last throughput rates up- and downstream and when starting a new
+    test, it will on the first try use what it thinks is the appropriate 
+    amount of data to make the test run in approximately 20 seconds. This 
+    usually reduces the number of "sub-tests" performed in order to get 
+    a good result.
+
+    This means that running the program in stand-alone mode with infinite
+    repetition, or perhaps starting it once every hour or so through cron, 
+    and supplying it with a "-n10" option, will result in more test
+    results per hour and less load on the test servers.
+
+  - For standard TPTEST 3 usage, you can use e.g. "-d 60" along with 
+    "-n0" to cause the program to loop infinitely, performing tests but
+    waiting 60 seconds between each consecutive test.
+
+  - Socket send and receive buffers 
