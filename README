@@ -86,9 +86,7 @@ Once GnuTLS is installed, go to src/cli and do
 
 * Linux
 
-Make sure g++ version 4.8 or later is installed. (Version 4.7 will also work
-if the line CXXFLAGS += -Dthread_local= is uncommented in src/cli/Makefile).
-Then go to src/cli and do
+Make sure g++ version 4.7 or later is installed. Then go to src/cli and do
 
     make
 
@@ -104,16 +102,6 @@ Install gmake, llvm and gnutls using pkg_add, then go to src/cli and do
     gmake
 or
     gmake GNUTLS=1
-
-If problems occur when using older versions of the compilers, it might help to
-uncomment the line
-
-    CXXFLAGS += -Dthread_local=
-
-in the file src/cli/Makefile; then do
-
-    gmake clean
-    gmake
 
 * FreeBSD
 

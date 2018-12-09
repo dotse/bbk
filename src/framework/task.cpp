@@ -5,7 +5,10 @@
 #include "socketconnection.h"
 #include "serversocket.h"
 
-thread_local EventLoop *Task::supervisor = nullptr;
+#ifdef USE_THREADS
+thread_local
+#endif
+EventLoop *Task::supervisor = nullptr;
 
 Task::Task(const std::string &task_name) :
     Logger(task_name) {

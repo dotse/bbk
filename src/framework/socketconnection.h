@@ -213,8 +213,11 @@ private:
     uint16_t peer_port;
     uint16_t prefer_ip_type;
 
+#ifdef USE_THREADS
+    thread_local
+#endif
     // Per thread byte counters.
-    static thread_local uint64_t tot_bytes_sent, tot_bytes_received;
+    static uint64_t tot_bytes_sent, tot_bytes_received;
     bool debugging = false;
 #ifdef USE_GNUTLS
     bool use_tls = false;

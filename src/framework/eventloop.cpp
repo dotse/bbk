@@ -11,7 +11,10 @@
 #include "socketconnection.h"
 #include "serversocket.h"
 
-thread_local volatile int EventLoop::got_signal = 0;
+#ifdef USE_THREADS
+thread_local
+#endif
+volatile int EventLoop::got_signal = 0;
 
 #ifdef _WIN32
 void EventLoop::signalHandler(int signum) {
@@ -29,9 +32,18 @@ void EventLoop::signalHandler(int signum) {
 #include "socketreceiver.h"
 #include "workerprocess.h"
 
-thread_local std::map<int, int> EventLoop::terminatedPIDs;
-thread_local volatile int EventLoop::terminatedPIDtmp[100] = { 0 };
-thread_local std::string EventLoop::openFileOnSIGHUP;
+#ifdef USE_THREADS
+thread_local
+#endif
+std::map<int, int> EventLoop::terminatedPIDs;
+#ifdef USE_THREADS
+thread_local
+#endif
+volatile int EventLoop::terminatedPIDtmp[100] = { 0 };
+#ifdef USE_THREADS
+thread_local
+#endif
+std::string EventLoop::openFileOnSIGHUP;
 
 void EventLoop::signalHandler(int signum) {
     EventLoop::interrupt();

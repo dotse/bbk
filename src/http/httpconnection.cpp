@@ -16,8 +16,14 @@ void HttpConnection::send_ws_handshake(const std::string &key) {
         "Connection: Upgrade\r\n"
         "Upgrade: websocket\r\n"
         "Sec-WebSocket-Accept: ";
-    static thread_local char rkey[] = "012345678901234567890123456=";
-    static thread_local SHA1 sha1(rkey);
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static char rkey[] = "012345678901234567890123456=";
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static SHA1 sha1(rkey);
 
     sha1.update((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").c_str());
 

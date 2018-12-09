@@ -70,8 +70,10 @@ Socket::~Socket() {
 }
 
 namespace {
-    // TODO: global!
-    thread_local std::map<std::string, struct addrinfo *> dns_cache;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    std::map<std::string, struct addrinfo *> dns_cache;
 }
 
 void Socket::clearCache() {
@@ -226,7 +228,10 @@ bool Socket::setNonBlocking(int fd) {
 }
 
 const char *Socket::getIp(struct sockaddr *address, uint16_t *port) {
-    static thread_local char client_ip[INET6_ADDRSTRLEN];
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static char client_ip[INET6_ADDRSTRLEN];
     if (address->sa_family == AF_INET) {
         struct sockaddr_in *s = reinterpret_cast<sockaddr_in *>(address);
         inet_ntop(AF_INET, &s->sin_addr, client_ip, INET6_ADDRSTRLEN);
@@ -249,7 +254,10 @@ const char *Socket::getIp(struct addrinfo *address, uint16_t *port) {
 }
 
 const char *Socket::getIp(int fd, uint16_t *port, bool peer) {
-    static thread_local char client_ip[INET6_ADDRSTRLEN];
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static char client_ip[INET6_ADDRSTRLEN];
     static const char *no_ip = "unknown IP";
 
     struct sockaddr_storage address;

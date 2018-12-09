@@ -267,7 +267,10 @@ int Engine::setFds(fd_set &r, fd_set &w, fd_set &e) {
     return max;
 }
 
-thread_local volatile bool Engine::yield_called = false;
+#ifdef USE_THREADS
+thread_local
+#endif
+volatile bool Engine::yield_called = false;
 bool Engine::max_open_fd_reached = false;
 
 void Engine::handleMaxOpenFdReached() {

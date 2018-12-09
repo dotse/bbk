@@ -36,8 +36,14 @@ SocketConnection(const std::string &label, Task *owner,
 
 }
 
-thread_local uint64_t SocketConnection::tot_bytes_sent = 0;
-thread_local uint64_t SocketConnection::tot_bytes_received = 0;
+#ifdef USE_THREADS
+thread_local
+#endif
+uint64_t SocketConnection::tot_bytes_sent = 0;
+#ifdef USE_THREADS
+thread_local
+#endif
+uint64_t SocketConnection::tot_bytes_received = 0;
 
 SocketConnection::SocketConnection(const std::string &label, Task *owner,
                                    int fd, const char *ip, uint16_t port) :

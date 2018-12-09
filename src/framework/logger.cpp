@@ -67,15 +67,36 @@ std::string Logger::createHashKey(unsigned int length) {
     return s.str();
 }
 
-thread_local bool Logger::in_error = false;
-thread_local TimePoint Logger::start_time(timeNow());
-thread_local std::ostream *Logger::_logFile = &std::cerr;
-thread_local unsigned int Logger::log_count = 100000;
-thread_local unsigned int Logger::warn_count = 10000;
-thread_local unsigned int Logger::err_count = 10000;
+#ifdef USE_THREADS
+thread_local
+#endif
+bool Logger::in_error = false;
+#ifdef USE_THREADS
+thread_local
+#endif
+TimePoint Logger::start_time(timeNow());
+#ifdef USE_THREADS
+thread_local
+#endif
+std::ostream *Logger::_logFile = &std::cerr;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::log_count = 100000;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::warn_count = 10000;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::err_count = 10000;
 
 DummyStream Logger::_dummyLog;
-thread_local std::ostringstream Logger::_blackHole;
+#ifdef USE_THREADS
+thread_local
+#endif
+std::ostringstream Logger::_blackHole;
 DummyStream::~DummyStream() {
 }
 

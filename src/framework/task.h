@@ -408,7 +408,10 @@ private:
         return this->start();
     }
 
-    static thread_local EventLoop *supervisor;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static EventLoop *supervisor;
     TimePoint start_time;
     std::string the_result;
     std::string the_message;

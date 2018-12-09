@@ -207,9 +207,15 @@ public:
 
 private:
 #ifndef _WIN32
-    static thread_local std::map<int, int> terminatedPIDs;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static std::map<int, int> terminatedPIDs;
     std::map<int, Task *> pidOwner;
-    static thread_local std::string openFileOnSIGHUP;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static std::string openFileOnSIGHUP;
 #endif
 #ifdef USE_THREADS
     void do_init(EventLoop *parent);
@@ -229,8 +235,14 @@ private:
     void do_init();
 #endif
 
-    static thread_local volatile int got_signal;
-    static thread_local volatile int terminatedPIDtmp[100];
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static volatile int got_signal;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static volatile int terminatedPIDtmp[100];
 
     void check_finished();
     Task *nextTimerToExecute();

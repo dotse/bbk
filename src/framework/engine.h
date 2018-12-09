@@ -95,7 +95,10 @@ public:
 private:
 
     TimePoint deadline;
-    static thread_local volatile bool yield_called;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static volatile bool yield_called;
     static bool max_open_fd_reached;
     void handleMaxOpenFdReached();
     void killConnection(int fd);

@@ -179,10 +179,26 @@ private:
         return msSince(start_time);
     }
     std::string _label;
-    static thread_local bool in_error;
-    static thread_local TimePoint start_time;
-    static thread_local std::ostream *_logFile;
-    static thread_local std::ostringstream _blackHole;
-    static thread_local unsigned int log_count, warn_count, err_count;
+
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static bool in_error;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static TimePoint start_time;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static std::ostream *_logFile;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static std::ostringstream _blackHole;
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static unsigned int log_count, warn_count, err_count;
     static DummyStream _dummyLog;
 };

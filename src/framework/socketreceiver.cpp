@@ -37,8 +37,14 @@ SocketConnection *SocketReceiver::incoming() {
     child_msg.msg_control = cmsgbuf;
     child_msg.msg_controllen = sizeof(cmsgbuf);
 
-    static thread_local char buf[10000];
-    static thread_local struct iovec data = { buf, sizeof(buf) };
+#ifdef USE_THREADS
+    thread_local
+#endif
+    static char buf[10000];
+#ifdef USE_THREADS
+thread_local
+#endif
+    static struct iovec data = { buf, sizeof(buf) };
 
     child_msg.msg_iov = &data;
     child_msg.msg_iovlen = 1;
