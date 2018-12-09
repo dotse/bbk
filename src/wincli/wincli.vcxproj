@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AFDCBCD7-E513-4D46-A468-C750B5A2FDE2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>wincli</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\bbk;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>RUN_SERVER=1;WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\cli\cliclient.h" />
+    <ClInclude Include="..\cli\cookiemanager.h" />
+    <ClInclude Include="..\cli\utils.h" />
+    <ClInclude Include="..\framework\bridgetask.h" />
+    <ClInclude Include="..\framework\engine.h" />
+    <ClInclude Include="..\framework\eventloop.h" />
+    <ClInclude Include="..\framework\logger.h" />
+    <ClInclude Include="..\framework\pollstate.h" />
+    <ClInclude Include="..\framework\serversocket.h" />
+    <ClInclude Include="..\framework\socket.h" />
+    <ClInclude Include="..\framework\socketconnection.h" />
+    <ClInclude Include="..\framework\synchronousbridge.h" />
+    <ClInclude Include="..\framework\task.h" />
+    <ClInclude Include="..\framework\taskconfig.h" />
+    <ClInclude Include="..\http\cookiefile.h" />
+    <ClInclude Include="..\http\cookiemanager.h" />
+    <ClInclude Include="..\http\httpclientconnection.h" />
+    <ClInclude Include="..\http\httpclienttask.h" />
+    <ClInclude Include="..\http\httpconnection.h" />
+    <ClInclude Include="..\http\httphost.h" />
+    <ClInclude Include="..\http\httprequestengine.h" />
+    <ClInclude Include="..\http\httpserverconnection.h" />
+    <ClInclude Include="..\http\httptask.h" />
+    <ClInclude Include="..\http\http_common.h" />
+    <ClInclude Include="..\http\sha1.h" />
+    <ClInclude Include="..\http\webservertask.h" />
+    <ClInclude Include="..\http\websocketbridge.h" />
+    <ClInclude Include="..\json11\json11.hpp" />
+    <ClInclude Include="..\measurement\defs.h" />
+    <ClInclude Include="..\measurement\downloadtask.h" />
+    <ClInclude Include="..\measurement\infotask.h" />
+    <ClInclude Include="..\measurement\latencytask.h" />
+    <ClInclude Include="..\measurement\measurementagent.h" />
+    <ClInclude Include="..\measurement\measurementtask.h" />
+    <ClInclude Include="..\measurement\pingsweeptask.h" />
+    <ClInclude Include="..\measurement\progresstask.h" />
+    <ClInclude Include="..\measurement\rpingtask.h" />
+    <ClInclude Include="..\measurement\singlerequesttask.h" />
+    <ClInclude Include="..\measurement\speedtest.h" />
+    <ClInclude Include="..\measurement\tickettask.h" />
+    <ClInclude Include="..\measurement\uploadinfotask.h" />
+    <ClInclude Include="..\measurement\uploadtask.h" />
+    <ClInclude Include="..\measurement\warmuptask.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\cli\cliclient.cpp" />
+    <ClCompile Include="..\cli\main.cpp" />
+    <ClCompile Include="..\cli\utils.cpp" />
+    <ClCompile Include="..\framework\bridgetask.cpp" />
+    <ClCompile Include="..\framework\engine.cpp" />
+    <ClCompile Include="..\framework\eventloop.cpp" />
+    <ClCompile Include="..\framework\logger.cpp" />
+    <ClCompile Include="..\framework\serversocket.cpp" />
+    <ClCompile Include="..\framework\socket.cpp" />
+    <ClCompile Include="..\framework\socketconnection.cpp" />
+    <ClCompile Include="..\framework\synchronousbridge.cpp" />
+    <ClCompile Include="..\framework\task.cpp" />
+    <ClCompile Include="..\framework\taskconfig.cpp" />
+    <ClCompile Include="..\http\cookiefile.cpp" />
+    <ClCompile Include="..\http\cookiemanager.cpp" />
+    <ClCompile Include="..\http\httpclientconnection.cpp" />
+    <ClCompile Include="..\http\httpclienttask.cpp" />
+    <ClCompile Include="..\http\httpconnection.cpp" />
+    <ClCompile Include="..\http\httprequestengine.cpp" />
+    <ClCompile Include="..\http\httpserverconnection.cpp" />
+    <ClCompile Include="..\http\httptask.cpp" />
+    <ClCompile Include="..\http\http_common.cpp" />
+    <ClCompile Include="..\http\sha1.cpp" />
+    <ClCompile Include="..\http\webservertask.cpp" />
+    <ClCompile Include="..\http\websocketbridge.cpp" />
+    <ClCompile Include="..\json11\json11.cpp" />
+    <ClCompile Include="..\measurement\defs.cpp" />
+    <ClCompile Include="..\measurement\downloadtask.cpp" />
+    <ClCompile Include="..\measurement\infotask.cpp" />
+    <ClCompile Include="..\measurement\latencytask.cpp" />
+    <ClCompile Include="..\measurement\measurementagent.cpp" />
+    <ClCompile Include="..\measurement\measurementtask.cpp" />
+    <ClCompile Include="..\measurement\pingsweeptask.cpp" />
+    <ClCompile Include="..\measurement\progresstask.cpp" />
+    <ClCompile Include="..\measurement\rpingtask.cpp" />
+    <ClCompile Include="..\measurement\singlerequesttask.cpp" />
+    <ClCompile Include="..\measurement\speedtest.cpp" />
+    <ClCompile Include="..\measurement\tickettask.cpp" />
+    <ClCompile Include="..\measurement\uploadinfotask.cpp" />
+    <ClCompile Include="..\measurement\uploadtask.cpp" />
+    <ClCompile Include="..\measurement\warmuptask.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
