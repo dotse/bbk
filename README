@@ -6,6 +6,10 @@ The old and older directories contain the deprecated TPTEST-software source.
 How to build Bredbandskollen's CLI client
 =========================================
 
+Note: Pre-compiled binaries for the most common platforms can be downloaded from
+
+    http://www.bredbandskollen.se/en/bredbandskollen-cli/
+
 On Windows, open
 
     src/wincli/wincli.sln
