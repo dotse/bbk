@@ -1,8 +1,6 @@
 The src directory contains the source code to the command line version of
 Bredbandskollen CLI, a bandwidth measurement tool.
 
-The old and older directories contain the deprecated TPTEST-software source.
-
 How to build Bredbandskollen's CLI client
 =========================================
 
@@ -55,7 +53,7 @@ explained by demo programs in the examples directory.
 
 The directory json11 contains a JSON library for C++ provided by Dropbox, Inc.
 
-The directory measurement contains the bandwidth measurement engine, build atop
+The directory measurement contains the bandwidth measurement engine, built atop
 the framework.
 
 The directory cli contains a command line interface to the measurement engine.

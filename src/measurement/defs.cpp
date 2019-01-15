@@ -169,5 +169,10 @@ namespace {
 }
 
 const std::string measurement::appName = app_name();
+#if defined(__ANDROID__)
+const std::string measurement::hw_info = "Android Device";
+const std::string measurement::os_version = "Android OS";
+#else
 const std::string measurement::hw_info = getHWModel();
 const std::string measurement::os_version = getOSInfo();
+#endif

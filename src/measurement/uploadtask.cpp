@@ -48,7 +48,7 @@ double UploadTask::timerEvent() {
         // log() << "Check: " << byteCount() << " and " << threadSendCount();
 
         // Note: byteCount() is the number of bytes we know for sure have
-        // arrived at the server, threadSendCount() if the number of bytes
+        // arrived at the server, threadSendCount() is the number of bytes
         // we've put into socket buffers. We have to be careful and use the
         // lower value, i.e. byteCount(), which is too low, instead of the
         // higher value, i.e. threadSendCount(), which is too large.
