@@ -27,7 +27,7 @@ public:
         dbg_log() << "starting";
 
         // If child tasks still exist when this task is done,
-        // we want then to be removed:
+        // we want them to be removed:
         killChildTaskWhenFinished();
 
         // The second parameter to addNewTask sets this task as
