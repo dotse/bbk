@@ -1,8 +1,7 @@
-The src directory contains the source code to the command line version of
+The `src` directory contains the source code to the command line version of
 Bredbandskollen CLI, a bandwidth measurement tool.
 
-How to build Bredbandskollen's CLI client
-=========================================
+# How to build Bredbandskollen's CLI client
 
 Note: Pre-compiled binaries for the most common platforms can be downloaded from
 
@@ -36,16 +35,14 @@ To perform a bandwidth measurement using TLS, do
 
 For more information, see "Platform Notes" below.
 
-How to run the CLI client
-=========================
+# How to run the CLI client
 
 To perform a mesurement, simply run the executable program that was built using
 the above steps. For more information, run it with the --help argument or read
 
    https://frontend.bredbandskollen.se/download/README.txt
 
-About the source code
-=====================
+# About the source code
 
 The directories framework and http contain a basic C++ network programming
 framework with support for "tasks" and "timers". Some of the features are
@@ -62,8 +59,7 @@ The directory qt5gui contains the source code for a GUI to the measurement
 engine. To build it, Qt5 and QWebEngine are required. You must run the Qt5
 version of qmake to create a Makefile before running make to build the GUI.
 
-Platform Notes
-==============
+# Platform Notes
 
 * Windows
 
@@ -103,6 +99,7 @@ Install gmake, llvm and gnutls using pkg_add, then go to src/cli and do
 
     gmake
 or
+
     gmake GNUTLS=1
 
 * FreeBSD
@@ -111,6 +108,7 @@ Install gmake and gnutls using pkg, then go to src/cli and do
 
     gmake
 or
+
     gmake GNUTLS=1
 
 * NetBSD
@@ -119,4 +117,5 @@ Install gmake, llvm, clang, and gnutls using pkgin, then go to src/cli and do
 
     gmake
 or
+
     gmake GNUTLS=1
