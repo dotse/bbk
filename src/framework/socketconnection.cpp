@@ -146,11 +146,17 @@ size_t SocketConnection::sendData(const char *buf, size_t len) {
                 errno_log() << "TLS write error";
                 closeMe();
             } else {
-                warn_log() << "TLS write failure: "
-                           << gnutls_strerror(static_cast<int>(n));
+                if (!tls_send_pending) {
+                    warn_log() << "Socket " << socket()
+                               << "TLS write failure: "
+                               << gnutls_strerror(static_cast<int>(n));
+                    tls_send_pending = true;
+                }
             }
             return 0;
         }
+        // To reenable the GNUTLS_E_AGAIN warning, do this:
+        // tls_send_pending = false;
         if (debugging && n < 1000)
             log() << "socket " << socket() << "sendData <"
                   << std::string(buf, static_cast<size_t>(n)) << ">";

@@ -222,6 +222,7 @@ private:
 #ifdef USE_GNUTLS
     bool use_tls = false;
     bool session_initialized = false;
+    bool tls_send_pending = false;
     void setSessionInitialized() {
         session_initialized = true;
     }
