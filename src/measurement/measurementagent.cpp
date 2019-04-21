@@ -79,7 +79,7 @@ void MeasurementAgent::taskFinished(Task *task) {
         } else {
             if (result[result.size()-1] == '}') {
                 std::string newkey = obj["hashkey"].string_value();
-                std::string hashkey =
+                std::string hashkey = !force_key.empty() ? force_key :
                     key_store->getCookieVal("hash_key", wserv.hostname);
                 if (newkey == hashkey) {
                     // Nothing changed.
@@ -108,6 +108,7 @@ void MeasurementAgent::taskFinished(Task *task) {
             settings_result = result;
         }
         sendToClient("configuration", settings_result);
+        key_store->save();
     } else if (name == "contents") {
         sendToClient("setInfo", "{\"contents\": " +
                                 result + "}");
@@ -188,7 +189,8 @@ std::string MeasurementAgent::getDefaultConfig() {
         mserver4 = "192.36.30.2";
         mserver6 = "2001:67c:2ff4::2";
     }
-    std::string hashkey = key_store->getCookieVal("hash_key", domain);
+    std::string hashkey = !force_key.empty() ? force_key :
+        key_store->getCookieVal("hash_key", domain);
     if (hashkey.empty()) {
         hashkey = createHashKey();
         key_store->setCookie("hash_key="+hashkey+";max-age=999999999",
@@ -235,7 +237,7 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
             sendToClient("configuration", settings_result);
         } else {
             std::map<std::string, std::string> attrs;
-            std::string hashkey =
+            std::string hashkey = !force_key.empty() ? force_key :
                 key_store->getCookieVal("hash_key", wserv.hostname);
 #ifdef USE_GNUTLS
             if (mserv.is_tls)
@@ -326,6 +328,7 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
         case MeasurementState::FINISHED:
             state = MeasurementState::IDLE;
             sendToClient("agentReady");
+            mserv.hostname.clear();
             current_ticket.clear();
             break;
         case MeasurementState::IDLE:
@@ -418,17 +421,22 @@ void MeasurementAgent::handleConfigurationOption(const std::string &name,
     } else if (name.substr(0, 7) == "Client.") {
         std::string attr = name.substr(7);
         if (!attr.empty() && attr.size() <= 20 && std::string::npos ==
-            attr.find_first_not_of("abcdefghijklmnopqrstuvwxyz"))
+            attr.find_first_not_of("abcdefghijklmnopqrstuvwxyz")) {
             // TODO: check not reserved!
-            report_template[attr] = value;
-        else
+            if (attr == "hashkey")
+                force_key = value;
+            else
+                report_template[attr] = value;
+        } else {
             log() << "will ignore option " << name;
+        }
     } else if (name.substr(0, 7) == "Report.") {
         std::string attr = name.substr(7);
         if (!attr.empty() && attr.size() <= 20 && std::string::npos ==
-            attr.find_first_not_of("abcdefghijklmnopqrstuvwxyz"))
+            attr.find_first_not_of("abcdefghijklmnopqrstuvwxyz") &&
+            current_test)
             // TODO: check not reserved!
-            report_template[attr] = value;
+            current_test->addToReport(attr, value);
         else
             log() << "will ignore option " << name;
     } else if (name == "Measure.IpType") {

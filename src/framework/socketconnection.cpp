@@ -63,7 +63,8 @@ PollState SocketConnection::doRead(int fd) {
         n = gnutls_record_recv(session, socket_buffer, sizeof socket_buffer);
         if (n < 0) {
             if (gnutls_error_is_fatal(static_cast<int>(n))) {
-                err_log() << "TLS error on socket " << fd;
+                // Probably client terminated the connection abruptly
+                dbg_log() << "TLS error on socket " << fd;
                 return PollState::CLOSE;
             }
             //warn_log() << "TLS recv interrupt on socket " << fd;
@@ -148,7 +149,7 @@ size_t SocketConnection::sendData(const char *buf, size_t len) {
             } else {
                 if (!tls_send_pending) {
                     warn_log() << "Socket " << socket()
-                               << "TLS write failure: "
+                               << " TLS write failure: "
                                << gnutls_strerror(static_cast<int>(n));
                     tls_send_pending = true;
                 }
@@ -218,11 +219,15 @@ void SocketConnection::asyncSendData(const char *buf, size_t len) {
     }
 }
 
+PollState SocketConnection::tellOwner(const std::string &msg) {
+    return owner()->msgFromConnection(this, msg);
+}
+
 #ifdef USE_GNUTLS
 
 bool SocketConnection::
 init_tls_client(gnutls_certificate_credentials_t &x509_cred, bool verify_cert) {
-    log() << "Enable TLS on socket " << socket();
+    dbg_log() << "Enable TLS on socket " << socket();
 
     if (gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_NONBLOCK) < 0)
         return false;
@@ -289,7 +294,7 @@ ssize_t SocketConnection::tls_push(const void *buf, size_t len) {
 bool SocketConnection::
 init_tls_server(gnutls_certificate_credentials_t &x509_cred,
                 gnutls_priority_t &priority_cache) {
-    log() << "Enable TLS on socket " << socket();
+    dbg_log() << "Enable TLS on incoming socket " << socket();
 
     if (gnutls_init(&session, GNUTLS_SERVER | GNUTLS_NONBLOCK) < 0) {
         err_log() << "Cannot initialise TLS session";

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 // This is essentially an abstract base class. You must create subclasses
@@ -38,6 +38,7 @@
 class Socket;
 class ServerSocket;
 class SocketConnection;
+enum class PollState;
 class SocketReceiver;
 class WorkerProcess;
 
@@ -244,6 +245,15 @@ public:
     }
 #endif
 
+    // Normally, SocketConnection objects are designed for a specific type of
+    // Task, i.e. a HttpServerConnection might be designed for a WebServerTask.
+    // However, some SocketConnection subclasses are "generic" and meant to work
+    // with any Task ocbect as owner. When such SocketConnection objects want to
+    // contact the owner, they may use the below methods.
+    virtual PollState connectionReady(SocketConnection * /* conn */);
+    virtual PollState msgFromConnection(SocketConnection * /* conn */,
+                                        const std::string & /* msg */);
+
     // Number of bytes sent through SocketConnection objects owned by me:
     uint64_t bytesSent() const {
         return tot_bytes_sent;
@@ -274,12 +284,20 @@ protected:
     // on immediate failure. connRemoved will not be called in that case.
     //
     // The connection must belong to a _running_ task (probably this one).
+    // I.e. the task must have been added to the EventLoop and the start()
+    // method must have been called. You can't do this in the constructor!
     //
     // If successfully added, we will call connAdded and return true.
     // The EventLoop takes ownership of the SocketConnection object and
     // will call connRemoved and then delete it if the connection fails or
     // is closed or when the task is finished.
     bool addConnection(SocketConnection *conn);
+
+    // Use this if conn contains a socket that has already been connected.
+    // Returns false (and deletes conn) on failure.
+    // On success, returns true and calls connAdded on owner task,
+    // then calls connected() on conn to get initial state.
+    bool addConnected(SocketConnection *conn);
 
     // As above, but with a server connection.
     bool addServer(ServerSocket *conn);
@@ -337,7 +355,8 @@ protected:
     }
 
     virtual void handleExecution(Task *sender, const std::string &message) {
-        dbg_log() << "Event " << message << " from " << sender->label()
+        dbg_log() << "Event " << message << " from "
+                  << (sender ? sender->label() : "unknown")
                   << ", no handler implemented";
     }
 

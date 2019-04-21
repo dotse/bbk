@@ -23,6 +23,10 @@ int main(int argc, char *argv[]) {
 
     std::ofstream log_file;
     config.openlog(log_file);
+    if (!log_file) {
+        std::cerr << "cannot write to log file" << std::endl;
+        return 1;
+    }
 
     EventLoop loop;
 
@@ -38,7 +42,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     CookieFile cf(config.value("config_file"));
-    HttpHost webserver(config.value("Measure.Webserver"), 80, "", 0, &cf);
+    HttpHost webserver(agent_cfg.value("Measure.Webserver"), 80, "", 0, &cf);
     MeasurementAgent *agent = new MeasurementAgent(agent_cfg, webserver);
     CliClient client(config);
     if (config.value("listen").empty()) {

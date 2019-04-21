@@ -1,3 +1,7 @@
+ifeq ($(WEBROOT),1)
+CXXFLAGS += -DUSE_WEBROOT
+endif
+
 SOURCES += \
 	$(DIRLEVEL)/http/sha1.cpp \
 	$(DIRLEVEL)/http/httptask.cpp \
@@ -12,6 +16,9 @@ SOURCES += \
 	$(DIRLEVEL)/http/httprequestengine.cpp \
 	$(DIRLEVEL)/http/websocketbridge.cpp \
 	$(DIRLEVEL)/json11/json11.cpp
+
+OPT_SOURCES += \
+	$(DIRLEVEL)/http/cookiefile.cpp
 
 # Note: we don't add $(DIRLEVEL)/http/cookiefile.cpp by default
 #       since it uses the file system, which not all clients may want.

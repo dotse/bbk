@@ -72,9 +72,10 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
     std::string jsonerr;
     auto obj = json11::Json::parse(msg, jsonerr);
     if (!jsonerr.empty()) {
-        if (msg.substr(0, 12) == "AGENT EXIT: " && msg.size() > 12)
-            std::cerr << "\nfatal error" << msg.substr(10) << std::endl;
-        err_log() << "JSON error: got " << msg;
+        if (BridgeTask::isAgentTerminatedMessage(msg))
+            std::cerr << msg << std::endl;
+        else
+            err_log() << "JSON error: got " << msg;
         return_msgs.push_back(BridgeTask::msgToAgent("terminate"));
         return;
     }

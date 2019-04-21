@@ -15,6 +15,9 @@ public:
     static bool parseHeaders(const std::string &header, std::string &r,
                              std::multimap<std::string, std::string> &res);
 
+    // Guess mime type, e.g. "text/html", from url/filename
+    static const char *mime_type(const std::string &file_name);
+
     // Return -1 on failure.
     static time_t parseDateRfc1123(const std::string &date);
 

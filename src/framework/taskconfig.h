@@ -36,6 +36,10 @@ public:
         the_config.erase(key);
         add(key, val);
     }
+    void setDefault(const std::string &key, const std::string &val) {
+        if (the_config.find(key) == the_config.end())
+            add(key, val);
+    }
     void addLine(const std::string &line);
 
     // Make attrs available to worker processes

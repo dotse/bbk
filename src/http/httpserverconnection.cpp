@@ -96,6 +96,9 @@ bool HttpServerConnection::prepareFileResponse(const std::string &url) {
     if (fstat(static_file_fd, &sbuf) < 0)
         return false;
 
+    if (!S_ISREG(sbuf.st_mode))
+        return false;
+
     remaining_bytes = static_cast<size_t>(sbuf.st_size);
     sending_static_file = true;
     return true;
@@ -209,6 +212,10 @@ PollState HttpServerConnection::check_buffer() {
             }
             buffer_post_data = false;
             state = owner_task->newPostRequest(this, current_uri);
+        } else if (current_method == "OPTIONS") {
+            state = owner_task->preflightRequest(this, current_uri);
+        } else {
+            return PollState::CLOSE;
         }
     }
     if (state == HttpState::CLOSE)
@@ -258,9 +265,9 @@ void HttpServerConnection::get_all_parameters(const char *qpos,
                 if (c == '&') {
                     ++qpos;
                     break;
-                    //} else if (c == '+') {
-                    //++qpos;
-                    //c = ' ';
+                } else if (c == '+') {
+                    ++qpos;
+                    c = ' ';
                 } else if (c == '%') {
                     // Should be two hex digits after %,
                     // but if not, ignore errors and just keep the %
@@ -323,6 +330,19 @@ bool HttpServerConnection::parse_request() {
         current_query_string.clear();
     }
 
+    // uri might be given as http://some.domain/blah
+    if (current_uri.substr(0, 4) == "http") {
+        if (current_uri.substr(0, 7) == "http://")
+            qpos = current_uri.find('/', 7);
+        else if (current_uri.substr(0, 8) == "https://")
+            qpos = current_uri.find('/', 8);
+        else
+            return true;
+        if (qpos == std::string::npos)
+            current_uri = "/";
+        else
+            current_uri.erase(0, qpos);
+    }
     return true;
 }
 
@@ -441,7 +461,7 @@ std::string HttpServerConnection::cookieVal(const std::string &name) const {
 }
 
 HttpServerConnection::~HttpServerConnection() {
-    log() << "client connection closed";
+    dbg_log() << "client connection closed";
 #ifdef USE_WEBROOT
     if (sending_static_file)
         close(static_file_fd);

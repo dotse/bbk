@@ -31,6 +31,12 @@ public:
     bool empty() const {
         return store.empty();
     }
+
+    // Store persistently, return true on success
+    virtual bool save() {
+        return false;
+    }
+
 protected:
     bool isDirty() const {
         return dirty;

@@ -22,7 +22,7 @@ public:
     void taskFinished(Task *task) override;
     void uploadComplete();
     void doSaveReport(const json11::Json &args = json11::Json::object());
-
+    void addToReport(const std::string &attr, const std::string &val);
 private:
     MeasurementAgent *the_agent = nullptr;
     InfoTask *info_task = nullptr;

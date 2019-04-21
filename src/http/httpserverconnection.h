@@ -38,6 +38,10 @@ public:
     // Return true if query string in current request has parameter name:
     bool hasQueryPar(const std::string &name) const;
 
+    void eraseQueryPar(const std::string &name) {
+        current_query_pars.erase(name);
+    }
+
     // If query string in current request has parameter "name",
     // return the value of its first occurrence.
     // Otherwise return empty string.
@@ -102,6 +106,16 @@ public:
 
     const std::string &currentUri() const {
         return current_uri;
+    }
+
+    const std::string currentFullUrl() const {
+        if (current_query_string.empty())
+            return current_uri;
+        return current_uri + '?' + current_query_string;
+    }
+
+    const std::string &currentQueryString() const {
+        return current_query_string;
     }
 
     // Number of bytes left of the current HTTP POST.

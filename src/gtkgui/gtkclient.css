@@ -1,0 +1,11 @@
+window {
+}
+
+#dynamic-label {
+    background-color: #ffffff;
+    font-family: monospace;
+}
+
+#static-label {
+    font-weight: bold;    
+}

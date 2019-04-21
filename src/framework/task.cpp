@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include "task.h"
@@ -32,6 +32,17 @@ void Task::setMessage(const std::string &msg) {
     supervisor->notifyTaskMessage(this);
 }
 
+PollState Task::connectionReady(SocketConnection * /* conn */) {
+    log() << "connectionReady not implemented";
+    return PollState::CLOSE;
+}
+
+PollState Task::msgFromConnection(SocketConnection * /* conn */,
+                            const std::string & /* msg */) {
+    log() << "msgFromConnection not implemented";
+    return PollState::CLOSE;
+}
+
 bool Task::addConnection(SocketConnection *conn) {
     if (terminated()) {
         if (conn)
@@ -39,6 +50,15 @@ bool Task::addConnection(SocketConnection *conn) {
         return false;
     }
     return supervisor->addConnection(conn);
+}
+
+bool Task::addConnected(SocketConnection *conn) {
+    if (terminated()) {
+        if (conn)
+            delete conn;
+        return false;
+    }
+    return supervisor->addConnected(conn);
 }
 
 bool Task::adoptConnection(Socket *conn) {
@@ -90,10 +110,9 @@ bool Task::parseListen(const TaskConfig &tc, const std::string &log_label) {
         s >> ip;
         bool tls;
         if (ip.empty()) {
-            ip = "0.0.0.0";
             tls = false;
         } else if (ip == "tls") {
-            ip = "0.0.0.0";
+            ip.clear();
             tls = true;
         } else {
             std::string tmp;

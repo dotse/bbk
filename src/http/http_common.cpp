@@ -41,6 +41,30 @@ bool HttpCommon::parseHeaders(const std::string &header, std::string &r,
 }
 
 namespace {
+    std::map<std::string, const char *> mime_db = {
+        { "txt", "text/plain; charset=utf-8" },
+        { "html", "text/html; charset=utf-8" },
+        { "css", "text/css" },
+        { "js", "text/javascript" },
+        { "pdf", "application/pdf" },
+        { "xml", "application/xml" },
+        { "json", "application/json" },
+    };
+}
+
+const char *HttpCommon::mime_type(const std::string &file_name) {
+    auto pos = file_name.find_last_of('.');
+    if (pos == std::string::npos)
+        pos = 0;
+    else
+        ++pos;
+    auto p = mime_db.find(file_name.substr(pos));
+    if (p != mime_db.end())
+        return p->second;
+    return "application/octet-stream";
+}
+
+namespace {
     inline int toInt(char p1, char p2) {
         if (!isdigit(p1) || !isdigit(p2))
             return -1;

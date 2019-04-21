@@ -14,7 +14,9 @@
 // To use this class, you must
 //    - derive from this class
 //    - implement the sendMessageToClient method
-//    - override the taskFinished method to detect if the agent dies
+//    - implement a way for the client to send messages back, and pass those
+//      messages through the sendMsgToAgent method
+//    - if you override the start() method, call Bridge::start() first
 //    - create an agent object and a bridge object
 //    - add the bridge object to the event loop
 // The agent task will be aborted when the bridge task is finished.
@@ -77,6 +79,17 @@ public:
         return "{\"method\": \"" + method + "\", \"args\": " + jsonobj + "}";
     }
 
+    // Returns true if msg is formatted as a note that the agent has terminated
+    // and that there will be no more messages.
+    static bool isAgentTerminatedMessage(const std::string &msg) {
+        return (msg.substr(0, 12) == "AGENT EXIT: ");
+    }
+
+    // Format a message to signal that the Agent is gone.
+    static std::string agentTerminatedMessage(const std::string &err_msg) {
+        return "AGENT EXIT: " + err_msg;
+    }
+
     // Recommended way to format messages to the client: an event (or method)
     // name, and "arguments" stored in a JSON object.
     void sendMsgToClient(const std::string &method, const std::string &jsonobj) {
@@ -89,7 +102,7 @@ public:
 protected:
     void sendMsgToAgent(const std::string &msg) {
         executeHandler(the_agent, msg);
-        if (msg == terminate_msg)
+        if (msg.substr(0, terminate_msg.size()) == terminate_msg)
             die();
     }
 
@@ -99,5 +112,5 @@ protected:
 private:
     Task *the_agent;
     //const std::string quit_msg = "quit";
-    const std::string terminate_msg = "terminate";
+    const std::string terminate_msg = "{\"method\": \"terminate\"";
 };

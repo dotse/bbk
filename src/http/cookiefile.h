@@ -24,7 +24,7 @@ public:
     }
 
     // Write to disk, return false on failure.
-    bool save() {
+    bool save() override {
         if (isDirty())
             writeCookiesFile();
         return isDirty();

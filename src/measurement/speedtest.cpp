@@ -168,7 +168,7 @@ void SpeedTest::taskFinished(Task *task) {
             RpingTask *t = new RpingTask("rping", tstr, mserv);
             addNewTask(t, this);
 
-            // Send the ticket to the agent. The agent may use it to undate
+            // Send the ticket to the agent. The agent may use it to update
             // subscription into or fetch logs after the measurement is done.
             executeHandler(the_agent, tstr);
         }
@@ -318,6 +318,9 @@ void SpeedTest::uploadComplete() {
         info_task->setUploadDeadline(-1.0);
 }
 
+void SpeedTest::addToReport(const std::string &attr, const std::string &val) {
+    report[attr] = val;
+}
 
 void SpeedTest::doSaveReport(const json11::Json &args) {
     if (report_sent_to_server)

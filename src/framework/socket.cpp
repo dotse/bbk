@@ -43,11 +43,26 @@ Socket::Socket(const std::string &label, Task *owner,
                const std::string &hostname, uint16_t port) :
     Logger(label),
     _owner(owner),
-    _socket(-1),
     _hostname(hostname),
     _port(port),
     _state(PollState::NONE)
 {
+#ifndef _WIN32
+    if (!port && hostname == "UnixDomain") {
+        int pair_sd[2];
+        if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair_sd) < 0) {
+            errno_log() << "cannot create socket pair";
+            _socket = 0;
+        } else {
+            _socket = pair_sd[0];
+            unix_domain_peer = pair_sd[1];
+            fcntl(pair_sd[0], F_SETFL, O_NONBLOCK|O_CLOEXEC);
+            fcntl(pair_sd[1], F_SETFL, O_NONBLOCK);
+        }
+        return;
+    }
+#endif
+    _socket = -1;
     _peer_label = _hostname + ":" + std::to_string(_port);
 }
 
@@ -79,6 +94,7 @@ namespace {
 void Socket::clearCache() {
     for (auto p : dns_cache)
         freeaddrinfo(p.second);
+    dns_cache.clear();
 }
 
 struct addrinfo *Socket::getAddressInfo(uint16_t iptype) {
@@ -95,7 +111,23 @@ struct addrinfo *Socket::getAddressInfo(uint16_t iptype) {
         } else
             log() << "dns lookup " << _hostname;
 
-        int res = getaddrinfo(_hostname.c_str(), std::to_string(_port).c_str(),
+        const char *hostaddr;
+        if (_hostname.empty()) {
+            hints.ai_family = AF_INET6;
+            hints.ai_flags |= AI_PASSIVE;
+            log() << "wildcard address *:" << _port;
+            hostaddr = nullptr;
+        } else if (_hostname.find_first_not_of("1234567890.:") ==
+                   std::string::npos) {
+            hints.ai_flags |= AI_NUMERICHOST;
+            log() << "numeric address " << _hostname;
+            hostaddr = _hostname.c_str();
+        } else {
+            log() << "dns lookup " << _hostname;
+            hostaddr = _hostname.c_str();
+        }
+
+        int res = getaddrinfo(hostaddr, std::to_string(_port).c_str(),
                               &hints, &addressInfo);
         if (res != 0) {
             err_log() << "lookup failed: " << gai_strerror(res);

@@ -77,8 +77,8 @@ ifeq ($(LOGLEVEL),dbg)
 CXXFLAGS += -DTASKRUNNER_LOGERR -DTASKRUNNER_LOGWARN
 CXXFLAGS += -DTASKRUNNER_LOGINFO -DTASKRUNNER_LOGDBG
 endif
-ifeq ($(WEBROOT),1)
-CXXFLAGS += -DUSE_WEBROOT
+ifeq ($(SANDBOXED),1)
+CXXFLAGS += -DIS_SANDBOXED
 endif
 
 SOURCES += \
@@ -92,11 +92,18 @@ SOURCES += \
 	$(DIRLEVEL)/framework/socketreceiver.cpp \
 	$(DIRLEVEL)/framework/logger.cpp \
 	$(DIRLEVEL)/framework/bridgetask.cpp \
-	$(DIRLEVEL)/framework/synchronousbridge.cpp \
+	$(DIRLEVEL)/framework/synchronousbridge.cpp
+
+OPT_SOURCES += \
+	$(DIRLEVEL)/framework/shortmessageconnection.cpp \
+	$(DIRLEVEL)/framework/threadbridge.cpp \
+	$(DIRLEVEL)/framework/unixdomainbridge.cpp \
+	$(DIRLEVEL)/framework/unixdomainclient.cpp \
 	$(DIRLEVEL)/framework/loadbalancer.cpp
 
 OBJ=$(SOURCES:.cpp=.o)
 EXTRA_OBJ=$(EXTRA_SOURCES:.cpp=.o)
+OPT_OBJ=$(OPT_SOURCES:.cpp=.o)
 
 %.d: %.cpp
 	$(CXX) -MM $(CXXFLAGS) -MT $(@:.d=.o) $< > $@
@@ -115,5 +122,5 @@ include $(SOURCES:.cpp=.d) $(EXTRA_SOURCES:.cpp=.d)
 endif
 
 clean:
-	$(RM) $(CLEAN) $(TARGET) $(OBJ) $(EXTRA_OBJ) *~ \
+	$(RM) $(CLEAN) $(TARGET) $(OBJ) $(OPT_OBJ) $(EXTRA_OBJ) *~ \
 	  $(SOURCES:.cpp=.d) $(EXTRA_SOURCES:.cpp=.d) $(PROGRAMS)

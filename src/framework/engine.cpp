@@ -136,6 +136,24 @@ bool Engine::addClient(SocketConnection *conn) {
     if (!conn)
         return false;
 
+#ifndef _WIN32
+    if (conn->socket() >= 0) {
+        if (connectionStore.find(conn->socket()) != connectionStore.end()) {
+            err_log() << "Socket " << conn->socket() << " host "
+                      << conn->hostname() << " already exists";
+            return false;
+        }
+        if (conn->hostname() != "UnixDomain" || !conn->socket()) {
+            err_log() << "Socket " << conn->socket() << " host "
+                      << conn->hostname() << " not accepted";
+            return false;
+        }
+
+        // Unix Domain socket, socket already created and connected
+        addConnected(conn);
+        return true;
+    }
+#endif
     std::string label = conn->cacheLabel();
     auto p = keepaliveCache.find(label);
     if (!label.empty() &&
@@ -318,6 +336,10 @@ void Engine::handleMaxOpenFdReached() {
 bool Engine::run(double max_time) {
     deadline = timeAfter(max_time);
     yield_called = false;
+
+    for (auto p : connectionStore)
+        if (p.second->hasExpired(deadline))
+            killConnection(p.first);
 
     while (!yield_called) {
 
@@ -606,4 +628,11 @@ void Engine::handleIncoming(ServerSocket *server) {
     client->setState(client->connected());
     connectionStore[newfd] = client;
     server->owner()->connAdded(client);
+}
+
+void Engine::addConnected(SocketConnection *conn) {
+    dbg_log() << "addConnected " << conn->socket();
+    connectionStore[conn->socket()] = conn;
+    conn->owner()->connAdded(conn);
+    conn->setState(conn->connected());
 }

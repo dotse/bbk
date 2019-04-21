@@ -18,8 +18,8 @@ volatile int EventLoop::got_signal = 0;
 
 #ifdef _WIN32
 void EventLoop::signalHandler(int signum) {
-	EventLoop::interrupt();
-	got_signal = signum;
+    EventLoop::interrupt();
+    got_signal = signum;
 }
 #else
 #include <sys/types.h>
@@ -302,6 +302,20 @@ bool EventLoop::addConnection(SocketConnection *conn) {
     return false;
 }
 
+bool EventLoop::addConnected(SocketConnection *conn) {
+    if (!conn)
+        return false;
+
+    if (tasks.find(conn->owner()) != tasks.end()) {
+        engine.addConnected(conn);
+        return true;
+    }
+
+    err_log() << "cannot add connection";
+    delete conn;
+    return false;
+}
+
 bool EventLoop::addServer(ServerSocket *conn) {
     if (!conn)
         return false;
@@ -543,6 +557,7 @@ void EventLoop::runUntilComplete() {
     dbg_log() << "End Loop; Threads left: " << threads.size();
     waitForThreadsToFinish();
 #endif
+    flushLogFile();
 }
 
 #ifdef USE_THREADS

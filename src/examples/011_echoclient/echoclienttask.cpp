@@ -3,7 +3,8 @@
 
 double EchoClientTask::start() {
     log() << "Will create EchoClientConnection";
-    addConnection(new EchoClientConnection(this, _hostname, _port));
+    if (!addConnection(new EchoClientConnection(this, _hostname, _port)))
+        setError("Cannot find server");
     return 1.0;
 }
 
@@ -13,6 +14,7 @@ double EchoClientTask::timerEvent() {
         return 0;
     }
     log() << "Create another EchoClientConnection";
-    addConnection(new EchoClientConnection(this, _hostname, _port));
+    if (!addConnection(new EchoClientConnection(this, _hostname, _port)))
+        setError("Cannot find server");
     return 1.0;
 }

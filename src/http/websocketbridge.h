@@ -29,6 +29,9 @@ public:
     // Returns empty string unless ready. Thread safe.
     std::string url() const;
 
+    // Return true if client is connected:
+    bool clientConnected() const;
+
 private:
     WSBlistener *listen_task = nullptr;
     std::atomic<uint16_t> listen_port;

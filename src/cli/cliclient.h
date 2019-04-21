@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "../framework/logger.h"
+#include "../framework/taskconfig.h"
 #include "../framework/synchronousbridge.h"
 
 class CliClient : public Logger, public SynchronousClient {

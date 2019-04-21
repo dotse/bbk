@@ -80,6 +80,28 @@ void WebServerTask::wsHandshakeFinished(HttpServerConnection *,
                                         const std::string &) {
 }
 
+// Origin: http://www.mydomain.com:9001
+// Origin: https://www.mydomain.com
+// domain should be "mydomain.com" or "www.mydomain.com"
+std::string WebServerTask::corsHeader(HttpServerConnection *conn,
+                                      const std::string &domain) {
+    if (domain.empty())
+        return "Access-Control-Allow-Origin: *\r\n";
+    std::string origin = conn->getHeaderVal("origin");
+    auto pos = origin.find(domain);
+    if (pos == std::string::npos)
+        return std::string();
+
+    if (pos && origin[pos-1] != '/' && origin[pos-1] != '.')
+        return std::string();
+
+    if (origin.size() != pos + domain.size() &&
+        origin[pos + domain.size()] != ':')
+        return std::string();
+
+    return "Access-Control-Allow-Origin: " + origin + "\r\n";
+}
+
 #ifdef USE_GNUTLS
 #include "../framework/socketreceiver.h"
 

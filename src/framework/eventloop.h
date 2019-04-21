@@ -112,9 +112,18 @@ public:
     // If s = 0, run timer immediately. If s < 0, remove timer.
     void resetTimer(Task *task, double s);
 
+    // Create a new socket connection, and add it to the loop.
     // Returns false (and deletes conn) on failure.
     // On success, returns true and calls connAdded on owner task.
+    // A connection to the server will be initiated. When connected, the
+    // connected() method will be called on conn to get initial state.
     bool addConnection(SocketConnection *conn);
+
+    // Use this if conn contains a socket that has already been connected.
+    // Returns false (and deletes conn) on failure.
+    // On success, returns true and calls connAdded on owner task,
+    // then calls connected() on conn to get initial state.
+    bool addConnected(SocketConnection *conn);
 
     // Returns false (and deletes conn) on failure.
     // On success, returns true and calls serverAdded on owner task.
@@ -156,7 +165,7 @@ public:
     // Asynchronously execute an external command.
     // Return false on immediate failure.
     int externalCommand(Task *owner, const char *const argv[]);
-    void daemonize();
+    static void daemonize();
 
     // Create a child process. Return child's PID. Channels can be
     // used to pass sockets and messages between parent and child.

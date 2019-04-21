@@ -19,8 +19,8 @@ public:
     double start() override;
     //double timerEvent() override;
 
-    std::string headers(const std::string &code, const std::string &hdr = "") {
-        return "HTTP/1.1 " + code + "\r\n" + fixed_response_headers + hdr;
+    std::string headers(const std::string &code) {
+        return "HTTP/1.1 " + code + "\r\n" + fixed_response_headers;
     }
 
     // Return a string that may be inserted into the HTTP response headers.
@@ -81,6 +81,12 @@ public:
     virtual void wsHandshakeFinished(HttpServerConnection *conn,
                                      const std::string &uri);
 
+    //Override this to implement a response to a preflight (OPTIONS) request.
+    virtual HttpState preflightRequest(HttpServerConnection * /* conn */,
+                                       const std::string & /* uri */) {
+        return HttpState::CLOSE;
+    }
+
     void connAdded(SocketConnection *conn) override {
         log() << "new connection id=" << conn->id();
     }
@@ -96,6 +102,11 @@ public:
     }
     SocketConnection *newClient(int fd, const char *ip, uint16_t port,
                                 ServerSocket *) final;
+
+    // Return Access-Control-Allow-Origin header if the conn's current request
+    // originates from domain (or a subdomain to it), otherwise return "".
+    static std::string corsHeader(HttpServerConnection *conn,
+                                  const std::string &domain);
 
     std::string webRoot() const {
         return webroot;

@@ -8,6 +8,8 @@
 #endif
 #ifndef _WIN32
 #include <unistd.h>
+#else
+#include <intrin.h>
 #endif
 
 #include <cstdio>

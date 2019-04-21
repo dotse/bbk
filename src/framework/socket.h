@@ -39,6 +39,14 @@ public:
         return _state;
     }
 
+#ifndef _WIN32
+    // Return the peer socket descriptor if this is a Unix Domain socket
+    // connection. If not, return 0. May be used in another thread or process.
+    int getUnixDomainPeer() const {
+        return unix_domain_peer;
+    }
+#endif
+
     virtual ~Socket();
 
     // By default, if we have a keepalive (cached) connection to the same
@@ -58,6 +66,17 @@ public:
 
     virtual void setOwner(Task *t) {
         _owner = t;
+    }
+
+    // Call this to have the socket removed automatically before a given number
+    // of seconds. Note: the network engine might remove the socket 1-2 seconds
+    // before the timeout, so adjust the timeout value accordingly!
+    void setExpiry(double s) {
+        expiry = timeAfter(s);
+    }
+
+    bool hasExpired(const TimePoint &when) const {
+        return (expiry < when);
     }
     const char *localIp() const {
         const char *ip = getIp(socket(), nullptr, false);
@@ -147,7 +166,13 @@ private:
     Socket(const Socket &);
     Task *_owner;
     int _socket;
+#ifndef _WIN32
+    // If this is a Unix Domain socket, the peer socket descriptor will be
+    // stored here:
+    int unix_domain_peer = 0;
+#endif
     std::string _hostname;
     uint16_t _port;
     PollState _state;
+    TimePoint expiry = timeMax();
 };

@@ -29,6 +29,7 @@ class Task;
 class Engine : public Logger {
 public:
     bool addClient(SocketConnection *conn);
+    void addConnected(SocketConnection *conn);
     bool addServer(ServerSocket *conn);
 
     Engine(std::string label);

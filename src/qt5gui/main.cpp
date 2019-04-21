@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
         return 1;
     agent_cfg.set("Measure.AutoSaveReport", "true");
     std::ofstream log_file;
-    if (config.value("log_file") != "-") {
-        log_file.open(config.value("log_file"));
+    if (config.value("logfile") != "-") {
+        log_file.open(config.value("logfile"));
         Logger::setLogFile(log_file);
     }
 
@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
     config.set("listen", "0");
     config.set("listen_addr", "127.0.0.1");
     config.set("browser",  "2");
+    agent_cfg.set("config_file", config.value("config_file"));
 
     WebsocketBridge *bridge = new WebsocketBridge(nullptr, config);
     std::thread agent_thread(runAgent, bridge, agent_cfg);

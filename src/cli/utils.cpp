@@ -7,6 +7,7 @@
 #define mkdir(x) _mkdir(x)
 #else
 #include <csignal>
+#include <unistd.h>
 #include <sys/stat.h>
 #endif
 #include <cstdlib>
@@ -28,23 +29,34 @@ namespace {
 #endif
 }
 
-std::string createAndGetAppDir() {
+std::string createAndGetAppDir(std::string dir) {
+    std::string home;
 #ifdef _WIN32
-    std::string dir(std::getenv("HOMEDRIVE"));
-    dir += std::getenv("HOMEPATH");
-    dir += "\\.bredbandskollen";
+    if (dir.empty()) {
+        if (!std::getenv("HOMEDRIVE") || !std::getenv("HOMEPATH"))
+            return "";
+        home = std::string(std::getenv("HOMEDRIVE")) + std::getenv("HOMEPATH");
+        dir = home + "\\.bredbandskollen";
+    }
     _mkdir(dir.c_str());
 #else
-    const char *home = std::getenv("HOME");
-    if (!home)
-        return "";
-    std::string dir(home);
-    dir += "/.bredbandskollen";
+    if (dir.empty()) {
+        if (!std::getenv("HOME"))
+            return "";
+        home = std::getenv("HOME");
+        dir = home + "/.bredbandskollen";
+    }
     int status = mkdir(dir.c_str(), 0755);
     if (status && errno != EEXIST) {
         return "";
     }
 #endif
+
+#ifdef IS_SANDBOXED
+    if (!home.empty())
+        chdir(home.c_str());
+#endif
+
     return dir + pathSep;
 }
 
@@ -59,7 +71,6 @@ bool parseArgs(int argc, char *argv[],
 
     CliMode mode = CliMode::NONE;
 
-    client_cfg.set("app_dir", createAndGetAppDir());
     client_cfg.set("port", "80");
     client_cfg.set("mtype", "ipv4");
     client_cfg.set("listen_addr", "127.0.0.1");
@@ -211,6 +222,9 @@ bool parseArgs(int argc, char *argv[],
             return false;
         }
     }
+
+    client_cfg.set("app_dir", createAndGetAppDir(client_cfg.value("app_dir")));
+
     if (client_cfg.value("local") == "1" && client_cfg.value("server").empty()) {
         std::cerr << "missing --server option" << std::endl;
         return false;

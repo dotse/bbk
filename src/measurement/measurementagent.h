@@ -61,6 +61,8 @@ private:
     // If the client doesn't manage keys, we store them here:
     CookieManager *key_store;
 
+    std::string force_key;
+
     // The web server and the measurement server:
     HttpHost wserv, mserv;
 

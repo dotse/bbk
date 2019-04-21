@@ -44,7 +44,14 @@ public:
     std::string url() const {
         return connect_url;
     }
+
+    // Return true if client is connected:
+    bool clientConnected() const {
+        return client != nullptr;
+    }
+
 private:
+
     void notify_url() {
         std::cerr << "\nOPEN URL: " << connect_url << std::endl;
     }
@@ -97,6 +104,10 @@ std::string WebsocketBridge::url() const {
     if (!listen_task || !listen_port.load())
         return std::string();
     return listen_task->url();
+}
+
+bool WebsocketBridge::clientConnected() const {
+    return (listen_task && listen_task->clientConnected());
 }
 
 WSBlistener::WSBlistener(Task *bridge, const TaskConfig &cfg) :
@@ -193,6 +204,7 @@ void WSBlistener::serverAdded(ServerSocket *socket) {
 void WSBlistener::connRemoved(SocketConnection *s) {
     if (dynamic_cast<HttpServerConnection *>(s) == client) {
         log() << "WebsocketBridge client disconnected";
+        client = nullptr;
         setResult("");
     }
 }

@@ -175,6 +175,12 @@ protected:
     SocketConnection(const std::string &label, Task *owner, int fd,
                      const char *ip, uint16_t port);
 
+    // Send a "message" to owner task. It will be executed as
+    //     msgFromConnection(this, msg)
+    // in the owner task. This is useful if you want to create SocketConnection
+    // subclasseses that work with any Task.
+    PollState tellOwner(const std::string &msg);
+
 private:
     // Create a connection to the given host. Will be executed asynchronously,
     // then one of the callbacks connected / connectionFailed will be called.
@@ -234,7 +240,7 @@ private:
     bool init_tls_client(gnutls_certificate_credentials_t &x509_cred,
                          bool verify_cert);
     int try_tls_handshake() {
-        log() << "TLS handshake socket " << socket();
+        dbg_log() << "TLS handshake socket " << socket();
         return gnutls_handshake(session);
     }
     static ssize_t tls_pull_static(gnutls_transport_ptr_t self,

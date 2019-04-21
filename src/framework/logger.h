@@ -18,7 +18,12 @@
 #pragma once
 
 #ifdef _WIN32
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
+#ifdef max
+#undef max
+#endif
 #else
 #include <string.h>
 #endif
@@ -28,10 +33,28 @@
 #include <chrono>
 #include <thread>
 
+#ifdef __ANDROID_API__
+#include <android/log.h>
+#endif
+
 class DummyStream {
 public:
     template<class T>
     DummyStream &operator<<(T ) { return *this; }
+#ifdef __ANDROID_API__
+    DummyStream &operator<<(const char *s) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "BBK", "%s", s);
+        return *this; }
+    DummyStream &operator<<(std::string s) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "BBK", "%s", s.c_str());
+        return *this; }
+    DummyStream &operator<<(int i) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "BBK", "%d", i);
+        return *this; }
+    DummyStream &operator<<(double x) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "BBK", "%f", x);
+        return *this; }
+#endif
     DummyStream& operator<<(std::ostream &(*)(std::ostream &) ) {
         return *this;
     }
@@ -118,6 +141,9 @@ public:
     static TimePoint timeAfter(double s) {
         return timeNow() + std::chrono::microseconds(toUs(s));
     }
+    static TimePoint timeMax() {
+        return TimePoint::max();
+    }
     static std::chrono::microseconds::rep toUs(double t) {
         return static_cast<std::chrono::microseconds::rep>(1e6*t);
     }
@@ -130,6 +156,10 @@ public:
 
     std::string label() const {
         return _label;
+    }
+
+    void resetLabel(const std::string &new_label) {
+        _label = new_label;
     }
 
 protected:

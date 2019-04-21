@@ -18,12 +18,6 @@ public:
     virtual void newEventFromAgent(std::deque<std::string> &return_msgs,
                                    const std::string &msg) = 0;
 
-    // Returns true if msg is formatted as a note that the agent has terminated
-    // and that there will be no more messages.
-    static bool isTerminateMessage(const std::string &msg) {
-        return (msg.substr(0, 12) == "AGENT EXIT: ");
-    }
-
     virtual ~SynchronousClient() { }
 };
 
