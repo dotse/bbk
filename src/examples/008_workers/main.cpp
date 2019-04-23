@@ -7,10 +7,10 @@
 
 /* Example 008
 
-Demonstration of a task that creates workers (subproceses).
+Demonstration of a task that creates workers (subprocesses).
 The Boss task creates three subprocesses, each running a Worker task.
 Each Worker will do some processing and then exit.
-The Boss wil exit when all worker processes are done.
+The Boss will exit when all worker processes are done.
 
 This example does not work on Windows.
 
@@ -85,7 +85,7 @@ double Boss::start() {
 
     // The createWorker call instructs the eventloop to create a child process
     // and run a new eventloop in that process. Our createWorkerTask method
-    // will be called in the chid process to provide a task for the eventloop
+    // will be called in the child process to provide a task for the eventloop
     // running in the child process.
     // First parameter to createWorker is a file name for the worker's log.
     // The second parameter is the number of channels between parent and worker.
