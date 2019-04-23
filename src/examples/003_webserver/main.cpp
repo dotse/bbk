@@ -39,7 +39,7 @@ HttpState WebServer::newGetRequest(HttpServerConnection *conn,
         conn->sendHttpResponse(headers("200 OK"), "text/plain",
                                "server shutdown");
         // This will terminate the task, i.e. shut the server down. Normally, of
-        // course, clients wouldn't be able to do this on a prduction server.
+        // course, clients wouldn't be able to do this on a production server.
         setResult("");
     } else
         conn->sendHttpResponse(headers("404 Not Found"), "text/plain",

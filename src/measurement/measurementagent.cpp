@@ -27,7 +27,7 @@ MeasurementAgent::MeasurementAgent(const TaskConfig &config,
     report_template["dlength"] = "10";
     report_template["ulength"] = "10";
 
-    for (auto p : config.cfg())
+    for (auto p : config)
         handleConfigurationOption(p.first, p.second);
 }
 

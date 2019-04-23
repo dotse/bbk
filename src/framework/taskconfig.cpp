@@ -87,7 +87,7 @@ void TaskConfig::_load(std::istream &cfg_stream) {
 
 std::ostream &operator<<(std::ostream &out, const TaskConfig &tc) {
     out << "[ ";
-    for (auto &p : tc.cfg())
+    for (auto &p : tc)
         out << p.first << " --> " << p.second << " ";
     out << ']';
     return out;
@@ -104,6 +104,32 @@ TaskConfig::parseList(const std::string &category) const {
             res.insert(val);
     }
     return res;
+}
+
+void TaskConfig::parseArgs(int &argc, char **&argv) {
+    int apos = 0;
+    while (++apos < argc) {
+        std::string arg = argv[apos];
+        if (arg.substr(0, 2) != "--")
+            break;
+        arg.erase(0, 2);
+        if (arg.empty()) {
+            ++apos;
+            break;
+        }
+        auto pos = arg.find('=');
+        if (pos == std::string::npos)
+            the_config.insert(std::make_pair(arg, std::string()));
+        else if (pos)
+            the_config.insert(std::make_pair(arg.substr(0, pos),
+                                             arg.substr(pos+1)));
+        // else ignore
+    }
+    if (--apos) {
+        argc -= apos;
+        argv[apos] = argv[0];
+        argv += apos;
+    }
 }
 
 std::map<std::string, std::string>
