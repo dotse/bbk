@@ -1,4 +1,4 @@
-// Copyright (c) 2017 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <goran@init.se>
 
 // This class stores cookies in memory only.
@@ -16,6 +16,9 @@ public:
     CookieManager(const std::string &name = "CookieManager") :
         Logger(name) {
     }
+
+    virtual ~CookieManager();
+
     void setCookie(const std::string &line, std::string domain,
                    std::string uri);
 
@@ -33,9 +36,7 @@ public:
     }
 
     // Store persistently, return true on success
-    virtual bool save() {
-        return false;
-    }
+    virtual bool save();
 
 protected:
     bool isDirty() const {

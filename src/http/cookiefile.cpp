@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include <fstream>
@@ -6,6 +6,11 @@
 
 #include "cookiefile.h"
 #include "../http/http_common.h"
+
+CookieFile::~CookieFile() {
+    if (isDirty())
+        writeCookiesFile();
+}
 
 void CookieFile::readCookiesFile() {
     if (filename.empty())

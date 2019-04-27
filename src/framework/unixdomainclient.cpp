@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 
 #include "unixdomainclient.h"
 #include "bridgetask.h"
@@ -45,5 +46,26 @@ std::string UnixDomainClient::pollAgent() {
     } catch (...) {
         return BridgeTask::agentTerminatedMessage("bad data");
     }
+    return pollAgent();
+}
+
+std::string UnixDomainClient::waitForMsgFromAgent(unsigned long timeout_us) {
+
+    std::string msg = pollAgent();
+    if (!msg.empty())
+        return msg;
+
+    struct timeval timeout;
+    timeout.tv_sec = timeout_us/1000000;
+    timeout.tv_usec = timeout_us%1000000;
+
+    fd_set readFds, errFds;
+    FD_ZERO(&readFds);
+    FD_ZERO(&errFds);
+    FD_SET(client_socket, &readFds);
+    FD_SET(client_socket, &errFds);
+    select(client_socket + 1, &readFds, nullptr, &errFds,
+           timeout_us ? &timeout : nullptr);
+
     return pollAgent();
 }

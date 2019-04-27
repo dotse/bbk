@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include "cookiemanager.h"
@@ -6,6 +6,13 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
+
+CookieManager::~CookieManager() {
+}
+
+bool CookieManager::save() {
+    return false;
+}
 
 // timeval contains only digits 0-9, doesn't start with 0.
 bool CookieManager::isExpired(const std::string &timeval) {

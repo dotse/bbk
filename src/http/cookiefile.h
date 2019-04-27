@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
@@ -18,10 +18,7 @@ public:
     // By default, we try to save cookies in the destructor. However, if
     // the save operation fails, all updates are lost. If you can't afford to
     // lose cookies, call save() and check the return value.
-    ~CookieFile() {
-        if (isDirty())
-            writeCookiesFile();
-    }
+    ~CookieFile() override;
 
     // Write to disk, return false on failure.
     bool save() override {

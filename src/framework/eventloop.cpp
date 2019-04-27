@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include <algorithm>
@@ -64,7 +64,7 @@ void EventLoop::signalHandler(int signum) {
                 terminatedPIDtmp[++i] = wstatus;
                 return;
             }
-        // Bad, shoudn't use terminatedPIDs asynchronously. Won't happen if
+        // Bad, shouldn't use terminatedPIDs asynchronously. Won't happen if
         // terminatedPIDtmp is large enough, i.e. twice number of chldren.
         EventLoop::terminatedPIDs[pid] = wstatus;
     }

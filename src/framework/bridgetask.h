@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2019 Internetstiftelsen
 // Written by Göran Andersson <initgoran@gmail.com>
 
 // If a task needs to communicate with an application running outside the
@@ -52,7 +52,8 @@ public:
         if (task == the_agent) {
             if (!task->result().empty()) {
                 log() << "Agent terminated";
-                sendMsgToClient("AGENT EXIT: " + task->result());
+                sendMsgToClient(agentTerminatedMessage(task->result()));
+                the_agent = nullptr;
             }
             die();
         }
