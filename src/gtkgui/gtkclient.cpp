@@ -6,6 +6,14 @@
 #include "gtkclient.h"
 #include <glib-unix.h>
 
+void GtkClient::run() {
+    app = gtk_application_new("bbk.iis.se", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(app, "activate",
+                     G_CALLBACK(GtkClient::activate), this);
+    g_application_run(G_APPLICATION(app), 0, nullptr);
+    g_object_unref(app);
+}
+
 void GtkClient::newEventFromAgent(const std::string &msg) {
     log() << "Got: " << msg;
 
@@ -163,6 +171,8 @@ void GtkClient::updateServerBox() {
 gboolean GtkClient::poll_agent(gint , GIOCondition c, gpointer data) {
     auto self = reinterpret_cast<GtkClient *>(data);
     if (c & G_IO_HUP) {
+        // Agent gone
+        self->doQuit();
         return FALSE;
     }
     while (true) {

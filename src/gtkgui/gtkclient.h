@@ -15,6 +15,11 @@ public:
     GtkClient(const TaskConfig &config, int unix_domain_peer);
     ~GtkClient();
 
+    void run();
+    void doQuit() {
+        pushToAgent("terminate");
+        g_application_quit(G_APPLICATION(app));
+    }
     static void activate(GtkApplication *app, gpointer user_data);
     static gboolean poll_agent(gint fd, GIOCondition c, gpointer data);
     static void start_measurement(GtkWidget *widget, gpointer data);
@@ -53,6 +58,7 @@ private:
     MState state = MState::IDLE;
     bool got_ticket = false;
     bool user_abort = false;
+    GtkApplication *app;
     GtkWidget *main_window;
     GtkWidget *start_button;
     GtkWidget *label_isp, *label_ticket, *label_date,

@@ -29,7 +29,6 @@ int main(int argc, char *argv[]) {
     TaskConfig agent_cfg, config;
     if (!parseArgs(argc, argv, config, agent_cfg))
         return 1;
-    agent_cfg.set("Measure.Webserver", "beta4.bredbandskollen.se");
     agent_cfg.set("Measure.AutoSaveReport", "true");
 
     std::ofstream log_file;
@@ -43,20 +42,16 @@ int main(int argc, char *argv[]) {
     if (!client_socket)
         exit(1);
 
-    auto client = new GtkClient(config, client_socket);
-
     std::thread agent_thread(runAgent, bridge, agent_cfg,
                              config.value("config_file"), config.value("logfile"));
 
-    GtkApplication *app = gtk_application_new("bbk.iis.se",
-                                              G_APPLICATION_FLAGS_NONE);
-    g_signal_connect(app, "activate", G_CALLBACK(GtkClient::activate), client);
-    int status = g_application_run(G_APPLICATION(app), 0, nullptr);
-    g_object_unref(app);
+    {
+        GtkClient client(config, client_socket);
+        client.run();
+    }
 
-    delete client;
-    agent_thread.join();
     close(client_socket);
+    agent_thread.join();
 
-    return status;
+    return 0;
 }
