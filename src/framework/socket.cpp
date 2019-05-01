@@ -105,11 +105,6 @@ struct addrinfo *Socket::getAddressInfo(uint16_t iptype) {
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_flags = AI_ADDRCONFIG;
-        if (_hostname.find_first_not_of("1234567890.:") == std::string::npos) {
-            hints.ai_flags |= AI_NUMERICHOST;
-            log() << "numeric address " << _hostname;
-        } else
-            log() << "dns lookup " << _hostname;
 
         const char *hostaddr;
         if (_hostname.empty()) {
