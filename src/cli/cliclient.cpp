@@ -172,9 +172,13 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
                 if (the_config.value("quiet") != "1")
                     *out << "\n\nRESULT: ";
 
-                *out << report.latency << ' '
+                std::string measurement_id = arg_obj["MeasurementID"].string_value();
+                *out << measurement_id << ' ' 
                      << report.download << ' '
                      << report.upload << ' '
+                     << report.latency << ' '
+                     << report.measurement_server << ' '
+                     << report.isp << ' '
                      << report.ticket;
                 if (report.rating.empty())
                     *out << std::endl;
