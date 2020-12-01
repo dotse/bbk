@@ -10,6 +10,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <sys/select.h>
 
 #include "logger.h"
 
