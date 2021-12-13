@@ -44,7 +44,17 @@ std::string createAndGetAppDir(std::string dir) {
         if (!std::getenv("HOME"))
             return "";
         home = std::getenv("HOME");
+#ifdef __linux__
+        if (!std::getenv("XDG_DATA_HOME")) {
+            dir = home + "/.local/share/bredbandskollen";
+        } else {
+            std::string xdg_data_home = std::getenv("XDG_DATA_HOME");
+            dir = xdg_data_home + "/bredbandskollen";
+        }
+#else
+        // Fall back to $HOME for other platforms
         dir = home + "/.bredbandskollen";
+#endif
     }
     int status = mkdir(dir.c_str(), 0755);
     if (status && errno != EEXIST) {
