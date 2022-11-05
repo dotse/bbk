@@ -16,6 +16,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <fstream>
 
 #include "defs.h"
 #include "../http/httpclientconnection.h"
@@ -42,6 +43,20 @@ namespace {
         return result;
     }
 #endif
+    std::string get_release(std::string filename, std::string key) {
+        std::string value = "";
+        std::ifstream file(filename);
+        std::string line;
+
+        key += "=";
+        while (std::getline(file, line)) {
+            if (line.find(key) == 0) {
+                value = line.substr(key.size());
+            }
+        }
+        value.erase(std::remove(value.begin(), value.end(), '\"'), value.end());
+        return value;
+    }
 
     std::string app_name() {
 
@@ -125,7 +140,10 @@ namespace {
         }
         return CPUBrandString;
 #else
-        return external_cmd("uname -m").substr(0, 50);
+        std::string modelString = get_release("/etc/hw-release", "NAME");
+        if(modelString == "")
+            modelString = external_cmd("uname -m").substr(0, 50);
+        return modelString;
 #endif
     }
 
@@ -164,7 +182,9 @@ namespace {
         osInfo = [[[NSProcessInfo processInfo] operatingSystemVersionString] UTF8String];
 
 #else
-        osInfo = external_cmd("uname -sr").substr(0, 50);
+        osInfo = get_release("/etc/os-release", "NAME");
+        if(osInfo == "")
+            osInfo = external_cmd("uname -sr").substr(0, 50);
 #endif
         return osInfo;
     }
