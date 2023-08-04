@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 void base64_encode(const unsigned char *src, size_t len, char *destination);
 
