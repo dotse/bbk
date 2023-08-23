@@ -94,6 +94,9 @@ bool parseArgs(int argc, char *argv[],
             return false;
         } else if (arg == "--quiet") {
             client_cfg.set("quiet", "1");
+        } else if (arg == "--csv") {
+            client_cfg.set("quiet", "1");
+            client_cfg.set("limiter", ",");
         } else if (arg == "--local") {
             mode = (mode == CliMode::NONE) ? CliMode::LOCAL : CliMode::IN_ERROR;
 #if defined(RUN_SERVER)
@@ -217,6 +220,7 @@ bool parseArgs(int argc, char *argv[],
                << "\nCommand line interface:\n"
                << "  --quiet             Write a single line of output\n"
                << "  --out=FILENAME      Append output to FILENAME instead of stdout\n"
+               << "  --csv               Write a single line as comma separated\n"
 #endif
                << std::endl;
             return false;

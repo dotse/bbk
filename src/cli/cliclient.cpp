@@ -32,6 +32,7 @@ CliClient::CliClient(const TaskConfig &config) :
 #else
     out_is_tty = isatty(fileno(stdout));
 #endif
+    limiter = the_config.value("limiter");
     out_quiet = (the_config.value("quiet") == "1" ||
                  the_config.value("logfile") == "-");
     if (!the_config.value("out").empty()) {
@@ -166,6 +167,7 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
         std::string tst = arg_obj["task"].string_value();
         if (tst == "global") {
             if (out_quiet) {
+ 
                 // Enable output:
                 out->clear(std::istream::goodbit);
 
@@ -173,17 +175,17 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
                     *out << "\n\nRESULT: ";
 
                 std::string measurement_id = arg_obj["MeasurementID"].string_value();
-                *out << measurement_id << ' ' 
-                     << report.download << ' '
-                     << report.upload << ' '
-                     << report.latency << ' '
-                     << report.measurement_server << ' '
-                     << report.isp << ' '
+                *out << measurement_id << limiter 
+                     << report.download << limiter
+                     << report.upload << limiter
+                     << report.latency << limiter
+                     << report.measurement_server << limiter
+                     << report.isp << limiter
                      << report.ticket;
                 if (report.rating.empty())
                     *out << std::endl;
                 else
-                    *out << ' ' << report.rating << std::endl;
+                    *out << limiter << report.rating << std::endl;
             }
             return_msgs.push_back(BridgeTask::msgToAgent("quit"));
         } else if (tst == "latency") {
