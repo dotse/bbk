@@ -39,6 +39,7 @@ private:
     void do_output(double value, const char *msg, bool final = false);
     std::ostream *out;
     bool out_is_tty, out_quiet;
+    std::string limiter = " ";
     std::ostringstream current_line;
     std::string current_header;
     // Set to true during upload and download:
