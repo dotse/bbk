@@ -35,6 +35,8 @@ public:
         return store.empty();
     }
 
+    void eraseCookies(const std::string &domain);
+
     // Store persistently, return true on success
     virtual bool save();
 

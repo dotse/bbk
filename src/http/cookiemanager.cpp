@@ -62,13 +62,15 @@ void CookieManager::setCookie(const std::string &line,
             cookie_av[Field::path] = HttpCommon::uriPath(uri); // default-path
 
     // Check if the new cookie replaces an existing
-    for (unsigned i=Cache::cache_len; i<v.size(); i+=Field::field_len) {
+    for (size_t i=Cache::cache_len; i<v.size(); i+=Field::field_len) {
         if (v[i+Field::name] == cookie_av[Field::name] &&
             v[i+Field::path] == cookie_av[Field::path]) {
             if (expired) {
-                v.erase(v.begin()+i, v.begin()+i+Field::field_len);
+                v.erase(v.begin() + static_cast<ssize_t>(i),
+                        v.begin() + static_cast<ssize_t>(i+Field::field_len));
             } else {
-                std::move(cookie_av.begin(), cookie_av.end(), v.begin()+i);
+                std::move(cookie_av.begin(), cookie_av.end(),
+                          v.begin() + static_cast<ssize_t>(i));
                 dirty = true;
                 cookie_av.clear();
                 return;
@@ -117,7 +119,8 @@ std::vector<std::string> CookieManager::cookieSplit(const std::string &line) {
             cookie_av[Field::domain] = avlc.substr(eqpos);
         } else if (eqpos == 8 && lcname == "_expires") {
             // Our internal format, unix timestamp value.
-            if (av.find_first_not_of("0123456789", ++eqpos) == std::string::npos)
+            ++eqpos;
+            if (av.find_first_not_of("0123456789", eqpos) == std::string::npos)
                 cookie_av[Field::expires] = av.substr(eqpos);
             else // Corrupt cookie file?
                 cookie_av[Field::expires] = "0";
@@ -218,12 +221,13 @@ std::string CookieManager::httpHeaderLine(const std::string &domain,
     while (!subdomains.empty()) {
         // Reevaluate:
         auto &v = subdomains.back()->second;
-        for (unsigned i=Cache::cache_len; i<v.size(); ) {
+        for (size_t i=Cache::cache_len; i<v.size(); ) {
             const std::string &expiry = v[i+Field::expires];
             if (!expiry.empty() &&
                 (cache_expiry.empty() || less(expiry, cache_expiry))) {
                 if (isExpired(expiry)) {
-                    v.erase(v.begin()+i, v.begin()+i+Field::field_len);
+                    v.erase(v.begin()+static_cast<ssize_t>(i),
+                            v.begin()+static_cast<ssize_t>(i+Field::field_len));
                     continue;
                 } else
                     cache_expiry = expiry;
@@ -256,6 +260,14 @@ std::string CookieManager::httpHeaderLine(const std::string &domain,
         cit->second[Cache::expiry] = cache_expiry;
     }
     return cval;
+}
+
+void CookieManager::eraseCookies(const std::string &domain) {
+    auto cit = store.find(domain);
+    if (cit == store.end())
+        return;
+    store.erase(cit);
+    dirty = true;
 }
 
 std::string CookieManager::getCookieVal(const std::string &name,

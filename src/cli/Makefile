@@ -12,4 +12,7 @@ SOURCES=../http/cookiefile.cpp \
 	utils.cpp \
 	cliclient.cpp
 
+# CXXFLAGS += -m32 -I/usr/i686-linux-gnu/include/c++/8/i686-linux-gnu
+# LDFLAGS += -m32
+
 include $(DIRLEVEL)/measurement/mk.inc
