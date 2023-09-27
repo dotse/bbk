@@ -33,24 +33,8 @@ protected:
         if (++next_worker >= worker_proc.size())
             next_worker = 0;
     }
-#ifdef USE_GNUTLS
-    void doPass(int fd, size_t wid, ServerSocket *srv) {
-#else
-    void doPass(int fd, size_t wid, ServerSocket *) {
-#endif
-        if (wid >= worker_proc.size() || !worker_proc[wid]) {
-            err_log() << "Worker " << wid << " dead, dropping socket " << fd;
-            return;
-        }
-#ifdef USE_GNUTLS
-        unsigned int ch = portMap.find(srv) != portMap.end() ? portMap[srv] : 0;
-#else
-        unsigned int ch = 0;
-#endif
-        SocketReceiver *channel = worker_proc[wid]->channel(ch);
-        log() << "New connection fd=" << fd << " will pass to worker " << wid;
-        channel->passSocketToPeer(fd);
-    }
+
+    void doPass(int fd, size_t wid, ServerSocket *srv);
     void new_worker(size_t i);
     void removeWorker(pid_t pid);
     std::string workerConfig(unsigned int i=0) const {
@@ -66,6 +50,7 @@ private:
     unsigned int max_retries = 100;
     unsigned int no_channels = 1;
     std::vector<WorkerProcess *> worker_proc;
+    std::vector<TimePoint> worker_proc_health;
     size_t next_worker = 0;
     TaskConfig my_config;
     std::string worker_config;

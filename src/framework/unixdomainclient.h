@@ -26,7 +26,18 @@ public:
     // microseconds have passed (or forever, if timeout_us is 0).
     std::string waitForMsgFromAgent(unsigned long timeout_us = 0);
 
+    // Send message to agent. Note: If the message is large (perhaps >200KB),
+    // it's likely that the complete message can't be delivered to the agent
+    // immediately. In that case, it will be buffered and you may have to
+    // call pushToAgent (with new messages) or flushToAgent() repeatedly until
+    // the buffer is drained. (Of course, unless the agent actively reads the
+    // messages, the buffer can't be drained.)
     void pushToAgent(const std::string &msg);
+
+    // Returns true if agent has received all messages we sent. If the return
+    // value is false, you must call flushToAgent again at a later time (e.g.
+    // after 50ms, or preferably when the socket is found to be writable.)
+    bool flushToAgent();
 
 private:
     std::string to_agent;

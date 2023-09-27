@@ -6,6 +6,8 @@ OS:=$(shell uname)
 
 CXXFLAGS += -O2 -W -Wall -I$(DIRLEVEL)
 
+GLIB_COMPILE_RESOURCES = glib-compile-resources
+
 ifeq ($(OS),Linux)
 CXX = g++
 endif
@@ -104,6 +106,10 @@ OPT_SOURCES += \
 OBJ=$(SOURCES:.cpp=.o)
 EXTRA_OBJ=$(EXTRA_SOURCES:.cpp=.o)
 OPT_OBJ=$(OPT_SOURCES:.cpp=.o)
+RC_OBJ=$(RC_SOURCES:.rc.xml=.rc.o)
+RC_DEPS=$(RC_SOURCES:.rc.xml=.rc_d)
+RC_DEPS+=$(RC_SOURCES:.rc.xml=.rc.d)
+RC_INTERMEDIATE+=$(RC_SOURCES:.rc.xml=.rc.cpp)
 
 %.d: %.cpp
 	$(CXX) -MM $(CXXFLAGS) -MT $(@:.d=.o) $< > $@
@@ -111,16 +117,23 @@ OPT_OBJ=$(OPT_SOURCES:.cpp=.o)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): $(OBJ)
+%.rc_d: %.rc.xml
+	$(GLIB_COMPILE_RESOURCES) --generate-dependencies --dependency-file=$@ $<
+
+%.rc.cpp: %.rc.xml
+	$(GLIB_COMPILE_RESOURCES) --generate-source $< --target=$@
+
+$(TARGET): $(OBJ) $(RC_OBJ)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(PROGRAMS):
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 ifneq ($(MAKECMDGOALS),clean)
-include $(SOURCES:.cpp=.d) $(EXTRA_SOURCES:.cpp=.d)
+include $(SOURCES:.cpp=.d) $(RC_DEPS) $(EXTRA_SOURCES:.cpp=.d)
 endif
 
 clean:
 	$(RM) $(CLEAN) $(TARGET) $(OBJ) $(OPT_OBJ) $(EXTRA_OBJ) *~ \
-	  $(SOURCES:.cpp=.d) $(EXTRA_SOURCES:.cpp=.d) $(PROGRAMS)
+	  $(SOURCES:.cpp=.d) $(EXTRA_SOURCES:.cpp=.d) \
+	  $(RC_OBJ) $(RC_DEPS) $(RC_INTERMEDIATE) $(PROGRAMS)

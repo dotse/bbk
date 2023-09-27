@@ -48,7 +48,7 @@ void base64_encode(const unsigned char *src, size_t len, char *destination) {
 #if __GNUC__ > 6
         [[gnu::fallthrough]];
 #endif
-	// -Wimplicit-fallthrough=0
+        // -Wimplicit-fallthrough=0
 #endif
     case 2:
         *p++ = '=';

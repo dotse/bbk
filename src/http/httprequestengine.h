@@ -135,5 +135,3 @@ private:
     std::set<SocketConnection *> idle_connections;
     std::map<HttpClientConnection *, HREJob *>  active_jobs;
 };
-
-

@@ -12,9 +12,10 @@ public:
     SocketReceiver(Task *task, int sock, pid_t peer_pid);
 
     // Return connection object if new client available, else return nullptr.
-    virtual SocketConnection *incoming();
+    virtual SocketConnection *incoming() override;
 
-    bool passSocketToPeer(int fd);
+    // Return 0 for success, errno on failure
+    int passSocketToPeer(int fd);
 
     // Send data to peer. Return amount sent, or < 0 for error.
     ssize_t passMessageToPeer(const char *buf, size_t len);

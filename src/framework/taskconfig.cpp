@@ -3,8 +3,10 @@
 
 #include <sstream>
 #include <fstream>
+#include <iostream>
 #include "taskconfig.h"
 #include "eventloop.h"
+#include "../json11/json11.hpp"
 
 TaskConfig::TaskConfig(std::istream &cfg_stream) {
     _load(cfg_stream);
@@ -143,4 +145,52 @@ TaskConfig::parseKeyVal(const std::string &category) const {
             res.insert(std::make_pair(key, val));
     }
     return res;
+}
+
+/*Preconditions: New configs set with method "saveConfigurationOption"
+Old config options loaded into the_config in MeasurementAgent() (loadJsonFromFile).
+Postconditions: Configuration options transferred onto file */
+bool TaskConfig::saveJsonToFile(const std::string &filename) {
+    std::fstream cfgOptionsFile;
+
+    //Create file if not existing. Write the updated config in json-format to file.
+    cfgOptionsFile.open(filename, std::fstream::out);
+    if (cfgOptionsFile.is_open()) {
+        cfgOptionsFile << json11::Json(the_config).dump();
+    } else {
+        Logger::log("TaskConfig") << "Unable to open config file";
+    }
+
+    cfgOptionsFile.close();
+    return bool(cfgOptionsFile);
+}
+
+/*
+Used to load preexisting configuration options from file into json-object for further use.
+*/
+TaskConfig TaskConfig::loadJsonFromFile(const std::string &filename){
+    std::string fileContent;
+    std::ifstream inFile;
+    std::string err;
+    TaskConfig cfg;
+
+    inFile.open(filename);
+
+    if (inFile.is_open() && inFile) {
+        //consume entire inFile, from beginning to end.
+        fileContent.assign( (std::istreambuf_iterator<char>(inFile)),
+                                 (std::istreambuf_iterator<char>()) );
+    } else {
+        Logger::log("TaskConfig") << "Unable to open config file";
+    }
+
+    json11::Json JsonObj = json11::Json::parse(fileContent, err);
+
+    inFile.close();
+
+    for (auto p : JsonObj.object_items()) {
+        cfg.add(p.first, p.second.string_value());
+    }
+
+    return cfg;
 }

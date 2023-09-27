@@ -18,7 +18,7 @@
 #include "../framework/taskconfig.h"
 #include "../measurement/defs.h"
 #include "../http/sha1.h"
-#include <random>
+#include "../framework/logger.h"
 #include <vector>
 
 namespace {
@@ -82,9 +82,13 @@ bool parseArgs(int argc, char *argv[],
 
     for (int i=1; i<argc; ++i) {
         std::string arg(argv[i]);
-        if (arg == "--v6")
+        if (arg == "--v6") {
             client_cfg.set("mtype", "ipv6");
-        else if (arg == "--test") {
+            client_cfg.set("Measure.IpType", "override");
+        } else if (arg == "--v4") {
+            client_cfg.set("mtype", "ipv4");
+            client_cfg.set("Measure.IpType", "override");
+        } else if (arg == "--test") {
             mode = (mode == CliMode::NONE) ? CliMode::TEST : CliMode::IN_ERROR;
         } else if (arg == "--live") {
             mode = (mode == CliMode::NONE) ? CliMode::LIVE : CliMode::IN_ERROR;
@@ -100,11 +104,13 @@ bool parseArgs(int argc, char *argv[],
         } else if (arg == "--run-server") {
             mode = (mode == CliMode::NONE) ? CliMode::SERVER : CliMode::IN_ERROR;
 #endif
-        } else if (arg.substr(0, 11) == "--duration=")
+        } else if (arg.substr(0, 11) == "--duration=") {
             agent_cfg.set("Measure.LoadDuration",  argv[i]+11);
-        else if (arg.substr(0, 13) == "--speedlimit=")
+            client_cfg.set("Measure.LoadDuration", "override");
+        } else if (arg.substr(0, 13) == "--speedlimit=") {
             agent_cfg.set("Measure.SpeedLimit", argv[i]+13);
-        else if (arg.substr(0, 6) == "--out=")
+            client_cfg.set("Measure.SpeedLimit", "override");
+        } else if (arg.substr(0, 6) == "--out=")
             client_cfg.set("out", argv[i]+6);
         else if (arg.substr(0, 6) == "--dir=")
             client_cfg.set("app_dir", (argv[i]+6) + pathSep);
@@ -116,6 +122,8 @@ bool parseArgs(int argc, char *argv[],
             client_cfg.set("server", argv[i]+9);
         else if (arg.substr(0, 7) == "--port=")
             client_cfg.set("port", argv[i]+7);
+        else if (arg.substr(0, 12) == "--configure=")
+            client_cfg.add("configure", argv[i]+12);
         else if (arg.substr(0, 9) == "--listen=")
             client_cfg.set("listen", argv[i]+9);
         else if (arg.substr(0, 14) == "--listen-addr=")
@@ -247,7 +255,7 @@ bool parseArgs(int argc, char *argv[],
         agent_cfg.set("Measure.Webserver", "frontend.bredbandskollen.se");
         break;
     case CliMode::TEST:
-        agent_cfg.set("Measure.Webserver", "beta4.bredbandskollen.se");
+        agent_cfg.set("Measure.Webserver", "frontend-beta.bredbandskollen.se");
         break;
     case CliMode::LOCAL:
         client_cfg.set("local", "1");
@@ -275,16 +283,7 @@ bool parseArgs(int argc, char *argv[],
 
     if (!client_cfg.value("listen").empty() &&
         client_cfg.value("listen_pw").empty()) {
-        // Generate one-time password
-        uint32_t src[2];
-        std::random_device rng;
-        std::uniform_int_distribution<uint32_t> dist;
-        src[0] = dist(rng);
-        src[1] = dist(rng);
-        char pwd[sizeof(src)*2];
-        base64_encode(reinterpret_cast<const unsigned char *>(src),
-                      sizeof(src), pwd);
-        client_cfg.add("listen_pw", std::string(pwd, sizeof(src)*4/3));
+        client_cfg.add("listen_pw", Logger::createHashKey(12));
     }
     client_cfg.add("url", "http://" + agent_cfg.value("Measure.Webserver") +
                    "/standalone/dev/index.php");
@@ -298,10 +297,14 @@ bool parseArgs(int argc, char *argv[],
             client_cfg.add("logfile", client_cfg.value("app_dir") + "last_log");
     }
     client_cfg.set("config_file", client_cfg.value("app_dir") + "config");
+    agent_cfg.set("options_file", client_cfg.value("app_dir") + "ConfigOptions.txt");
 
     // Default to ipv6 if user wants to use a local ipv6 address
-    if (agent_cfg.value("Measure.LocalAddress").find(':') != std::string::npos)
+    if (agent_cfg.value("Measure.LocalAddress").find(':') !=
+        std::string::npos) {
         client_cfg.set("mtype", "ipv6");
+        client_cfg.set("Measure.IpType", "override");
+    }
 
     agent_cfg.add("Measure.AutoSaveReport",
                   client_cfg.value("listen").empty() ? "false" : "true");

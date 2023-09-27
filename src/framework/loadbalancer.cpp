@@ -43,6 +43,7 @@ double LoadBalancer::start() {
     }
 
     worker_proc.resize(tot_no_workers);
+    worker_proc_health.resize(tot_no_workers);
     if (parseListen(my_config, "LoadBalancerSocket")) {
         for (size_t i=0; i<tot_no_workers; ++i)
             new_worker(i);
@@ -69,6 +70,43 @@ void LoadBalancer::serverRemoved(ServerSocket *s) {
         }
     } else {
         log() << "Not a receiver";
+    }
+}
+
+#ifdef USE_GNUTLS
+void LoadBalancer::doPass(int fd, size_t wid, ServerSocket *srv) {
+#else
+void LoadBalancer::doPass(int fd, size_t wid, ServerSocket *) {
+#endif
+    if (wid >= worker_proc.size() || !worker_proc[wid]) {
+        err_log() << "Worker " << wid << " dead, dropping socket " << fd;
+        return;
+    }
+#ifdef USE_GNUTLS
+    unsigned int ch = portMap.find(srv) != portMap.end() ? portMap[srv] : 0;
+#else
+    unsigned int ch = 0;
+#endif
+    SocketReceiver *channel = worker_proc[wid]->channel(ch);
+    dbg_log() << "New connection fd=" << fd << " pass to worker " << wid;
+    int ret = channel->passSocketToPeer(fd);
+    if (!ret) {
+        worker_proc_health[wid] = TimePoint();
+    } else if (ret == EAGAIN) {
+        // The peer might be broken. Or we have a burst of new connections.
+        // If the peer stays broken for more than 5 seconds, we'll kill it.
+        if (worker_proc_health[wid] == TimePoint()) {
+            warn_log() << "Worker " << wid << " not responding, give it 5s to recover.";
+            worker_proc_health[wid] = timeNow();
+        } else if (secondsSince(worker_proc_health[wid]) > 5) {
+            err_log() << "job queue full, worker " << wid << " will be restarted";
+            removeWorker(worker_proc[wid]->pid());
+            worker_proc_health[wid] = TimePoint();
+        } else {
+            err_log() << "worker " << wid << " busy, cannot pass socket";
+        }
+    } else {
+        err_log() << "cannot pass socket to worker " << wid << " " << strerror(ret);
     }
 }
 

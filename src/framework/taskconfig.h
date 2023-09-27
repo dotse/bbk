@@ -7,6 +7,8 @@
 #include <set>
 #include <string>
 #include <stdexcept>
+#include <iostream>
+#include <fstream>
 
 class BadTaskConfig : public std::exception {
 public:
@@ -36,6 +38,9 @@ public:
     void set(const std::string &key, const std::string &val) {
         the_config.erase(key);
         add(key, val);
+    }
+    void erase(const std::string &key) {
+        the_config.erase(key);
     }
     void setDefault(const std::string &key, const std::string &val) {
         if (the_config.find(key) == the_config.end())
@@ -71,9 +76,9 @@ public:
         return the_config.find(key) != the_config.end();
     }
     // Return a range of the key/value paris for the given key:
-    std::pair<std::multimap<std::string, std::string>::iterator,
-        std::multimap<std::string, std::string>::iterator>
-        range(const std::string &key) {
+    std::pair<std::multimap<std::string, std::string>::const_iterator,
+        std::multimap<std::string, std::string>::const_iterator>
+        range(const std::string &key) const {
         return the_config.equal_range(key);
     }
 
@@ -93,6 +98,13 @@ public:
     // configuration directive given by second parameter.
     std::map<std::string, std::string>
         parseKeyVal(const std::string &category = "user") const;
+
+    // Store contents as a JSON object. Return false on failure.
+    bool saveJsonToFile(const std::string &filename);
+
+    // Load key/value pairs from JSON object. Values that are not strings will
+    // be ignored. Return empty object on failure.
+    static TaskConfig loadJsonFromFile(const std::string &filename);
 
 private:
     void _load(std::istream &cfg_stream);

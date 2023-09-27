@@ -245,7 +245,7 @@ private:
 #endif
 
 #ifdef USE_THREADS
-    thread_local
+    //thread_local
 #endif
     static volatile int got_signal;
 #ifdef USE_THREADS
