@@ -66,11 +66,11 @@ void CookieManager::setCookie(const std::string &line,
         if (v[i+Field::name] == cookie_av[Field::name] &&
             v[i+Field::path] == cookie_av[Field::path]) {
             if (expired) {
-                v.erase(v.begin() + static_cast<ssize_t>(i),
-                        v.begin() + static_cast<ssize_t>(i+Field::field_len));
+                v.erase(v.begin() + static_cast<long>(i),
+                        v.begin() + static_cast<long>(i+Field::field_len));
             } else {
                 std::move(cookie_av.begin(), cookie_av.end(),
-                          v.begin() + static_cast<ssize_t>(i));
+                          v.begin() + static_cast<long>(i));
                 dirty = true;
                 cookie_av.clear();
                 return;
@@ -226,8 +226,8 @@ std::string CookieManager::httpHeaderLine(const std::string &domain,
             if (!expiry.empty() &&
                 (cache_expiry.empty() || less(expiry, cache_expiry))) {
                 if (isExpired(expiry)) {
-                    v.erase(v.begin()+static_cast<ssize_t>(i),
-                            v.begin()+static_cast<ssize_t>(i+Field::field_len));
+                    v.erase(v.begin()+static_cast<long>(i),
+                            v.begin()+static_cast<long>(i+Field::field_len));
                     continue;
                 } else
                     cache_expiry = expiry;
