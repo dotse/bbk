@@ -94,7 +94,8 @@ SOURCES += \
 	$(DIRLEVEL)/framework/socketreceiver.cpp \
 	$(DIRLEVEL)/framework/logger.cpp \
 	$(DIRLEVEL)/framework/bridgetask.cpp \
-	$(DIRLEVEL)/framework/synchronousbridge.cpp
+	$(DIRLEVEL)/framework/synchronousbridge.cpp \
+	$(DIRLEVEL)/json11/json11.cpp
 
 OPT_SOURCES += \
 	$(DIRLEVEL)/framework/shortmessageconnection.cpp \
