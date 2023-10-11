@@ -3,10 +3,6 @@ Bredbandskollen CLI, a bandwidth measurement tool.
 
 # How to build Bredbandskollen's CLI client
 
-Note: Pre-compiled binaries for the most common platforms can be downloaded from
-
-    http://www.bredbandskollen.se/en/bredbandskollen-cli/
-
 On Windows, open
 
     src/wincli/wincli.sln
@@ -65,8 +61,9 @@ version of qmake to create a Makefile before running make to build the GUI.
 
 The code has not been thoroughly tested on Windows. Pull requests are welcome.
 
-Visual Studio 2015 or later is required. Visual Studio 2017 Community can be
-downloaded from https://visualstudio.microsoft.com/
+Visual Studio 2015 or later is required, as are the components
+MSVC v140 (VS 2015 C++ build tools) and Windows 10 SDK. Visual Studio 2022 Community
+can be downloaded from https://visualstudio.microsoft.com/
 
 Open src/wincli/wincli.sln in Visual Studio, then select "Build".
 
