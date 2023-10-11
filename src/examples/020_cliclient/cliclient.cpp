@@ -80,7 +80,7 @@ void MyClient::newEventFromAgent(std::deque<std::string> &return_msgs,
     if (msgCount == 4)
         return_msgs.push_back("quit");
 
-    if (isTerminateMessage(msg)) {
+    if (BridgeTask::isAgentTerminatedMessage(msg)) {
         // Agent gone.
         std::cerr << "\nBye." << std::endl;
     }
