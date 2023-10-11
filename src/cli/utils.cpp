@@ -279,7 +279,7 @@ bool parseArgs(int argc, char *argv[],
 #endif
         std::cerr << " and --local";
         return false;
-    };
+    }
 
     if (!client_cfg.value("listen").empty() &&
         client_cfg.value("listen_pw").empty()) {

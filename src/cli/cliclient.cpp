@@ -240,9 +240,9 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
             }
             if (!newConfig.empty()) {
                 json11::Json args = newConfig;
-                auto msg = BridgeTask::msgToAgent("saveConfigurationOption",
-                                                  args.dump());
-                return_msgs.push_back(msg);
+                auto mesg = BridgeTask::msgToAgent("saveConfigurationOption",
+						   args.dump());
+                return_msgs.push_back(mesg);
                 // Let the agent send agentReady again, with updated options:
                 return_msgs.push_back(BridgeTask::msgToAgent("clientReady"));
                 return;
@@ -258,9 +258,9 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
         }
         if (!newConfig.empty()) {
             json11::Json args = newConfig;
-            auto msg = BridgeTask::msgToAgent("setConfigurationOption",
-                                              args.dump());
-            return_msgs.push_back(msg);
+            auto mesg = BridgeTask::msgToAgent("setConfigurationOption",
+					       args.dump());
+            return_msgs.push_back(mesg);
         }
 
         if (the_config.hasKey("list_measurements")) {

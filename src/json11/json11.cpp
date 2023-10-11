@@ -233,7 +233,7 @@ public:
 class JsonNull final : public Value<Json::NUL, NullStruct> {
 public:
     JsonNull() : Value({}) {}
-    ~JsonNull();
+    ~JsonNull() override;
 };
 
 JsonNull::~JsonNull() {}
@@ -691,7 +691,7 @@ struct JsonParser final {
             map<string, Json> data;
             ch = get_next_token();
             if (ch == '}')
-                return std::move(data);
+                return data;
 
             while (1) {
                 if (ch != '"')
@@ -717,14 +717,14 @@ struct JsonParser final {
 
                 ch = get_next_token();
             }
-            return std::move(data);
+            return data;
         }
 
         if (ch == '[') {
             vector<Json> data;
             ch = get_next_token();
             if (ch == ']')
-                return std::move(data);
+                return data;
 
             while (1) {
                 i--;
@@ -741,7 +741,7 @@ struct JsonParser final {
                 ch = get_next_token();
                 (void)ch;
             }
-            return std::move(data);
+            return data;
         }
 
         return fail("expected value, got " + esc(ch));

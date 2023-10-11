@@ -28,6 +28,13 @@
 #include <string.h>
 #endif
 
+#ifndef DEBUG
+#define DEBUG 0
+#endif
+#ifndef TARGET_OS_IPHONE
+#define TARGET_OS_IPHONE 0
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <chrono>

@@ -156,7 +156,7 @@ void MeasurementAgent::taskFinished(Task *task) {
         std::string err;
         auto obj = json11::Json::parse(result, err);
         std::string res = "NOK";
-        if (err.empty() && obj["status"].number_value())
+        if (err.empty() && obj["status"].number_value() != 0)
             res = "OK";
         sendToClient("setInfo", "{\"logSent\": \"" +
                      res + "\"}");
