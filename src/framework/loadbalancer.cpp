@@ -121,7 +121,7 @@ void LoadBalancer::new_worker(size_t i) {
         worker_proc[i] = nullptr;
     }
 
-    if (isFinished())
+    if (terminated())
         return;
 
     std::string logfilename = my_config.value("workerlog");

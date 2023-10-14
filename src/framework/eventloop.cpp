@@ -273,7 +273,7 @@ void EventLoop::addTask(Task *task, Task *parent) {
         tasks[task] = parent;
         if (parent)
             startObserving(parent, task);
-        if (task->isFinished()) {
+        if (task->terminated()) {
             // Task finished when executing its constructor
             notifyTaskFinished(task);
             return;
@@ -420,7 +420,7 @@ void EventLoop::resetTimer(Task *task, double s) {
     if (s == 0)
         s = task->timerEvent();
     if (s > 0) {
-        auto t = std::chrono::microseconds(toUs(s));
+        auto t = toUs(s);
         timer_queue.insert(std::make_pair(timeNow()+t, task));
     }
 }
@@ -509,7 +509,7 @@ bool EventLoop::run(double timeout_s) {
         while (Task *task = nextTimerToExecute()) {
             double ts = task->timerEvent();
             if (ts > 0) {
-                auto t = std::chrono::microseconds(toUs(ts));
+                auto t = toUs(ts);
                 timer_queue.insert(std::make_pair(timeNow()+t, task));
             }
         }
