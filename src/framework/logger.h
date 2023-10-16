@@ -59,7 +59,8 @@ private:
 };
 
 /// \class TimePoint
-/// The TimePoint class is used to measure elapsed time during execution,
+/// \brief
+/// Measure elapsed time during execution,
 /// for example by timer events.
 ///
 /// It is simply a typedef to std::chrono::steady_clock::time_point.
@@ -72,7 +73,8 @@ private:
 ///     // 2.00042 seconds have elapsed.
 typedef std::chrono::steady_clock::time_point TimePoint;
 
-/// This is a simple logger. All classes that want to write to the global log
+/// \brief
+/// A simple logger. All classes that want to write to the global log
 /// file should inherit from this class.
 ///
 /// By default, logs will be written to cerr. To log elsewhere, you must

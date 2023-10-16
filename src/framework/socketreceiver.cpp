@@ -6,7 +6,7 @@
 #include "socketreceiver.h"
 
 SocketReceiver::SocketReceiver(Task *task, int sock, pid_t peer_pid) :
-    ServerSocket("SocketReceiver", task, sock),
+    ServerSocket(sock, "SocketReceiver", task),
     peer(peer_pid) {
 
     empty_data.iov_base = nullptr;

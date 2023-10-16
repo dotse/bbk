@@ -16,10 +16,12 @@ enum class PollState;
 class SocketReceiver;
 class WorkerProcess;
 
-/// This is essentially an abstract base class. You must create subclasses and
-/// pass subclass objects to the EventLoop's addTask method.
+/// \brief
 /// The purpose of a task is to manage socket connections, and/or to execute
 /// timers.
+///
+/// This is essentially an abstract base class. You must create subclasses and
+/// pass subclass objects to the EventLoop's addTask method.
 ///
 /// Timers are very simple; the start method must return the number of seconds
 /// until the timerEvent method should be called. The overridden timerEvent can
@@ -361,6 +363,7 @@ protected:
     bool parseListen(const TaskConfig &tc, const std::string &log_label);
 
 #ifdef USE_GNUTLS
+    /// Use SSL certificate for a listening socket.
     virtual bool tlsSetKey(ServerSocket *conn, const std::string &crt_path,
                    const std::string &key_path, const std::string &password) {
         return supervisor->tlsSetKey(conn, crt_path, key_path, password);
@@ -433,6 +436,7 @@ protected:
     }
 
 #ifdef USE_THREADS
+    /// Run task in a new thread.
     void addNewThread(Task *task, const std::string &name="ThreadLoop",
                       std::ostream *log_file = nullptr,
                       Task *parent = nullptr) {
