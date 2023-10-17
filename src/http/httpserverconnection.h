@@ -1,14 +1,6 @@
 // Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
 // Written by Göran Andersson <initgoran@gmail.com>
 
-// This class implements a small subset of the HTTP/1.1 server protocol.
-// When a new HTTP GET or POST request is made, the owner task's method
-// newGetRequest or newPostRequest will be called. If a websocket connection
-// is made, the owner task's method newWsRequest will be called.
-//
-// To use this class, you must derive from WebServerTask and implement
-// at least one of newGetRequest, newPostRequest, or newWsRequest.
-
 #pragma once
 
 #include <map>
@@ -23,6 +15,16 @@ enum class HttpState {
     READING_POST_DATA, WEBSOCKET
 };
 
+/// \brief
+/// HTTP/1.1 server protocol.
+///
+/// This class implements a small subset of the HTTP/1.1 server protocol.
+/// When a new HTTP GET or POST request is made, the owner task's method
+/// newGetRequest or newPostRequest will be called. If a websocket connection
+/// is made, the owner task's method newWsRequest will be called.
+///
+/// To use this class, you must derive from WebServerTask and implement
+/// at least one of newGetRequest, newPostRequest, or newWsRequest.
 class HttpServerConnection : public HttpConnection {
 public:
     HttpServerConnection(const std::string &label, WebServerTask *task, int fd,
@@ -35,16 +37,16 @@ public:
     //PollState unexpectedData(char *, size_t ) override;
     PollState writeData() override;
 
-    // Return true if query string in current request has parameter name:
+    /// Return true if query string in current request has parameter name:
     bool hasQueryPar(const std::string &name) const;
 
     void eraseQueryPar(const std::string &name) {
         current_query_pars.erase(name);
     }
 
-    // If query string in current request has parameter "name",
-    // return the value of its first occurrence.
-    // Otherwise return empty string.
+    /// If query string in current request has parameter "name",
+    /// return the value of its first occurrence.
+    /// Otherwise return empty string.
     std::string getQueryVal(const std::string &name) const;
 
     const std::multimap<std::string, std::string> &currentQueryPars() const {
@@ -53,13 +55,13 @@ public:
 
     std::map<std::string, std::string> currentRequestCookies() const;
 
-    // Return value of cookie if it exists, otherwise empty string
+    /// Return value of cookie if it exists, otherwise empty string.
     std::string cookieVal(const std::string &name) const;
 
-    // If HTTP headers in current request has attribute "name",
-    // return the value of its first occurrence.
-    // Otherwise return empty string.
-    // Note: use only lower-case letters in "name", e.g. "content-length".
+    /// If HTTP headers in current request has attribute "name",
+    /// return the value of its first occurrence.
+    /// Otherwise return empty string.
+    /// Note: use only lower-case letters in "name", e.g. "content-length".
     std::string getHeaderVal(const std::string &name) const;
 
     typedef std::multimap<std::string, std::string>::const_iterator Hit;
@@ -67,25 +69,25 @@ public:
             return http_request_headers.equal_range(name);
     }
 
-    // Async send response. Return length of what's to be sent:
+    /// Async send response. Return length of what's to be sent.
     size_t sendHttpResponse(const std::string &headers,
                             const std::string &mime,
                             const std::string &contents);
 
-    // Async send response headers. Return length of what's to be sent:
+    /// Async send response headers. Return length of what's to be sent:
     size_t sendHttpResponseHeader(const std::string &headers,
                                   const std::string &mime,
                                   size_t content_length);
 
-    // Async send response headers with the "chunked" encoding.
-    // Return length of what's to be sent:
+    /// Async send response headers with the "chunked" encoding.
+    /// Return length of what's to be sent.
     size_t sendChunkedResponseHeader(const std::string &headers,
                                      const std::string &mime);
 
-    // Send chunk. May only be used if we sent chunked headers.
+    /// Send chunk. May only be used if we sent chunked headers.
     size_t sendChunk(const std::string &content);
 
-    // To notify that all chunks have been sent.
+    /// To notify that all chunks have been sent.
     size_t chunkedResponseComplete();
 
     bool sendingChunkedResponse() const {
@@ -93,10 +95,11 @@ public:
     }
 
 #ifdef USE_WEBROOT
-    // Warning: call might be blocking!
-    // Can only be called in the newGetRequest method.
-    // Return true if url is a file that can be sent; then you should call the
-    // sendHttpFileResponse method; otherwise you'd want to send a 404 reply.
+    /// Can only be called in the newGetRequest method.
+    /// Return true if url is a file that can be sent; then you should call the
+    /// sendHttpFileResponse method; otherwise you'd want to send a 404 reply.
+    ///
+    /// *Warning!* Call might be blocking!
     bool prepareFileResponse(const std::string &url);
 
     HttpState sendHttpFileResponse(const std::string &headers,
@@ -118,29 +121,31 @@ public:
         return current_query_string;
     }
 
-    // Number of bytes left of the current HTTP POST.
+    /// Number of bytes left of the current HTTP POST.
     size_t remainingPostData() const {
         return remaining_post_data;
     }
-    // The owner task may call this in the newPostRequest handler and return
-    // HttpState::READING_POST_DATA.
-    // In that case, the owner task will not get partialPostData calls, but only
-    // a lastPostData call when the user has posted all data.
-    // Hint: check first that remainingPostData() isn't too large.
+
+    /// The owner task may call this in the newPostRequest handler and return
+    /// HttpState::READING_POST_DATA.
+    /// In that case, the owner task will not get partialPostData calls,
+    /// but only a lastPostData call when the user has posted all data.
+    ///
+    /// Hint: Check first that remainingPostData() isn't too large.
     void bufferPostData() {
         buffer_post_data = true;
     }
 
-    // Call this if the owner is to be notified after handshake:
+    /// Call this if the owner is to be notified after handshake:
     void notifyWsHandshake() {
         notify_after_ws_handshake = true;
     }
 
-    // Override this to make sure we're not transfered to an owner Task that
-    // is not a WebServerTask (or subclass).
+    /// Override this to make sure we're not transfered to an owner Task that
+    /// is not a WebServerTask (or subclass).
     void setOwner(Task *new_owner) override;
 
-    // Current request (first line and headers) in raw form
+    /// Current request (first line and headers) in raw form.
     std::string currentRequest() const {
         return current_request;
     }
