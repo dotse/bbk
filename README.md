@@ -43,17 +43,19 @@ the above steps. For more information, run it with the --help argument or read
 The directories framework and http contain a basic C++ network programming
 framework with support for "tasks" and "timers". Some of the features are
 explained by demo programs in the examples directory.
+The [API documentation](https://www.dsso.se/bbkapi/annotated.html)
+can be built from the source code.  
 
-The directory json11 contains a JSON library for C++ provided by Dropbox, Inc.
+The directory `json11` contains a JSON library for C++ provided by Dropbox, Inc.
 
-The directory measurement contains the bandwidth measurement engine, built atop
+The directory `measurement` contains the bandwidth measurement engine, built atop
 the framework.
 
-The directory cli contains a command line interface to the measurement engine.
+The directory `cli` contains a command line interface to the measurement engine.
 
-The directory qt5gui contains the source code for a GUI to the measurement
+The directory `qt5gui`     contains the source code for a GUI to the measurement
 engine. To build it, Qt5 and QWebEngine are required. You must run the Qt5
-version of qmake to create a Makefile before running make to build the GUI.
+version of `qmake` to create a Makefile before running `make` to build the GUI.
 
 # Platform Notes
 
