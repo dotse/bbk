@@ -25,7 +25,10 @@ public:
     double timerEvent() override;
 
     void newRequest(HttpClientConnection *conn) override {
-        conn->get(_url);
+        if (_post_data.empty())
+            conn->get(_url);
+        else
+            conn->post(_url, _post_data);
     }
 
     bool requestComplete(HttpClientConnection *conn) override;

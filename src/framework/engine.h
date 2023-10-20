@@ -26,6 +26,10 @@ class Task;
 #include <gnutls/gnutls.h>
 #endif
 
+/// \brief
+/// The network engine.
+///
+/// Cannot be used directly. Will be managed by the EventLoop class.
 class Engine : public Logger {
 public:
     bool addClient(SocketConnection *conn);
@@ -34,61 +38,72 @@ public:
 
     Engine(std::string label);
 
-    // Will kill all remaining connections.
+    /// Will kill all remaining connections.
     ~Engine();
 
-    // Close all connections, giving them at most
-    // max_time_ms milliseconds to finish what's
-    // already written to them.
+    /// Close all connections, giving them at most
+    /// max_time_ms milliseconds to finish what's
+    /// already written to them.
     void terminate(unsigned int max_time_ms);
 
-    // Call this in child process to close all redundant sockets after fork:
+    /// Call this in child process to close all redundant sockets after fork.
     void childProcessCloseSockets();
 
-    // Run "event loop".
-    // Will return when all connections have been closed,
-    // when a fatal error has occurred, or when max_time has passed.
-    // Return value is false on fatal error, otherwise true.
-    // You should call this function repetedly until you're done.
-    // Don't set max_time > 2000 on 32-bit platforms.
+    /// \brief
+    /// Run the "event loop" for at most `max_time` seconds.
+    ///
+    /// Will return when all connections have been closed,
+    /// when a fatal error has occurred, or when max_time has passed.
+    /// Return value is false on fatal error, otherwise true.
+    /// You should call this function repetedly until you're done.
+    ///
+    /// Don't set max_time > 2000 on 32-bit platforms.
     bool run(double max_time);
 
-    void debug();
-
+    /// Remove all connections owned by the task.
     void deleteConnByTask(const Task *task);
 
+    /// Call this to make the Engine::run method return prematurely.
     static void yield() {
         yield_called = true;
     }
+
+    /// \brief
+    /// Call this to enter a recovery mode if no more file descriptors
+    /// could be created.
     static void notifyOutOfFds() {
         // TODO: thread safe
         max_open_fd_reached = true;
     }
     std::set<Socket *> findSockByTask(const Task *t) const;
 
-    // Wake up all idle connections belonging to t:
+    /// Wake up all idle connections belonging to t:
     void wakeUpByTask(Task *t);
 
-    // Wake up connection s if it is idle, return false otherwise.
+    /// Wake up connection s if it is idle, return false otherwise.
     bool wakeUpConnection(SocketConnection *s);
     void cancelConnection(SocketConnection *s);
 
-    // Return true if connection still exists.
-    // Note! We cannot _use_ conn if it has been deleted!
+    /// Return true if connection still exists.
+    /// *Note!* We cannot _use_ conn if it has been deleted!
     bool connActive(const Socket *conn) const {
         for (auto it : connectionStore)
             if (it.second == conn)
                 return true;
         return false;
     }
+
+    /// Call this to make the Engine::run method return earlier.
     void resetDeadline(const TimePoint &t) {
         if (deadline > t)
             deadline = t;
     }
 
 #ifdef USE_GNUTLS
+    /// Set path to file containing chain of trust for SSL certificate.
     bool setCABundle(const std::string &path);
 
+    /// Use SSL certificate for a listening socket.
     bool tlsSetKey(ServerSocket *conn, const std::string &crt_path,
                    const std::string &key_path, const std::string &password);
 #endif

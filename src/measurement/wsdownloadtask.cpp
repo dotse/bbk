@@ -50,6 +50,7 @@ void WsDownloadTask::newRequest(HttpClientConnection *conn) {
         //conn->dbgOn();
 }
 
+#include <unistd.h>
 bool WsDownloadTask::nextRequest(HttpConnection *conn) {
     if (size_t size = loadSize()) {
         conn->sendWsMessage("download " + std::to_string(size));

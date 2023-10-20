@@ -25,13 +25,13 @@ double Logger::secondsTo(const TimePoint &t) {
     return d.count();
 }
 
-long Logger::msSince(const TimePoint &t) {
+int64_t Logger::msSince(const TimePoint &t) {
     auto now = timeNow();
     return std::chrono::duration_cast<std::chrono::milliseconds>
         (now - t).count();
 }
 
-long Logger::msTo(const TimePoint &t) {
+int64_t Logger::msTo(const TimePoint &t) {
     auto now = timeNow();
     return std::chrono::duration_cast<std::chrono::milliseconds>
         (t - now).count();
@@ -74,7 +74,7 @@ bool Logger::in_error = false;
 #ifdef USE_THREADS
 thread_local
 #endif
-TimePoint Logger::start_time(timeNow());
+TimePoint Logger::global_start_time(timeNow());
 #ifdef USE_THREADS
 thread_local
 #endif
@@ -91,20 +91,41 @@ unsigned int Logger::warn_count = 10000;
 thread_local
 #endif
 unsigned int Logger::err_count = 10000;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::log_count_saved = 100000;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::warn_count_saved = 10000;
+#ifdef USE_THREADS
+thread_local
+#endif
+unsigned int Logger::err_count_saved = 10000;
 
 DummyStream Logger::_dummyLog;
+
 #ifdef USE_THREADS
 thread_local
 #endif
 std::ostringstream Logger::_blackHole;
+
 DummyStream::~DummyStream() {
 }
 
 void Logger::setLogLimit(unsigned int loglines, unsigned int warnlines,
                          unsigned int errlines) {
-    log_count = loglines;
-    warn_count = warnlines;
-    err_count = errlines;
+    if (loglines)
+        log_count_saved = loglines;
+    if (warnlines)
+        warn_count_saved = warnlines;
+    if (errlines)
+        err_count_saved = errlines;
+
+    log_count = log_count_saved;
+    warn_count = warn_count_saved;
+    err_count = err_count_saved;
 }
 
 void Logger::sayTime(std::ostream &stream) {
@@ -123,7 +144,7 @@ std::ostream &Logger::errno_log() const {
     if (err_count) {
         in_error = true;
         --err_count;
-        *_logFile << "\n" << elapsed() << ' ' << _label << "*** "
+        *_logFile << "\n" << global_elapsed_ms() << ' ' << _label << "*** "
                   << (err_count ? "ERROR ***: " :  "LAST ERR ***: ")
 #ifdef _WIN32
                   << std::to_string(WSAGetLastError())
@@ -145,7 +166,7 @@ DummyStream &Logger::errno_log() const {
 void Logger::setLogFile(std::ostream &stream) {
     _logFile = &stream;
     in_error = false;
-    start_time = timeNow();
+    global_start_time = timeNow();
     sayTime(stream);
 }
 

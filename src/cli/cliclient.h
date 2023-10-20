@@ -7,7 +7,6 @@
 #include <sstream>
 
 #include "../framework/logger.h"
-#include "../framework/taskconfig.h"
 #include "../framework/synchronousbridge.h"
 
 class CliClient : public Logger, public SynchronousClient {
@@ -38,14 +37,17 @@ private:
     void do_output(const char *msg, bool final = false);
     void do_output(double value, const char *msg, bool final = false);
     std::ostream *out;
-    bool out_is_tty, out_quiet;
     std::ostringstream current_line;
     std::string current_header;
+    bool out_is_tty, out_quiet;
     // Set to true during upload and download:
     bool in_progress_task = false;
     // It latency result arrives asynchronously during
     // upload or download, we must wait until the end to show it:
     bool deferred_latency = false;
+
+    // If user wants to set persistent options, we shoud save them only once.
+    bool savedOptions = false;
 
     const TaskConfig the_config;
 };

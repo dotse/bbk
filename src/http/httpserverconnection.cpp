@@ -93,11 +93,10 @@ bool HttpServerConnection::prepareFileResponse(const std::string &url) {
         return false;
 
     struct stat sbuf;
-    if (fstat(static_file_fd, &sbuf) < 0)
+    if (fstat(static_file_fd, &sbuf) < 0 || !S_ISREG(sbuf.st_mode)) {
+        close(static_file_fd);
         return false;
-
-    if (!S_ISREG(sbuf.st_mode))
-        return false;
+    }
 
     remaining_bytes = static_cast<size_t>(sbuf.st_size);
     sending_static_file = true;
@@ -259,7 +258,7 @@ void HttpServerConnection::get_all_parameters(const char *qpos,
         } else if (*qpos == '=') {
             // Urldecode value:
             std::string par_name = std::string(ppos, qpos);
-            ++qpos; ; // Start of value
+            ++qpos; // Start of value
             std::ostringstream res;
             while (char c = *qpos) {
                 if (c == '&') {

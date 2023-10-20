@@ -171,4 +171,3 @@ std::vector<std::string> HttpCommon::split(const std::string &s,
     }
     return v;
 }
-

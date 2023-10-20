@@ -4,11 +4,16 @@
 #include <clocale>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #include "speedtest.h"
 
 #include "defs.h"
 #include "singlerequesttask.h"
+#include "../http/singlerequest.h"
 #include "pingsweeptask.h"
 #include "measurementagent.h"
 
@@ -27,7 +32,16 @@ MeasurementAgent::MeasurementAgent(const TaskConfig &config,
     report_template["dlength"] = "10";
     report_template["ulength"] = "10";
 
-    for (auto p : config)
+    options_filename = config.value("options_file");
+    if (!options_filename.empty()) {
+        // Load preexisting configuration options
+        cfgOptions = cfgOptions.loadJsonFromFile(options_filename);
+        //if (cfgOptions.hasKey("Client.hashkey"))
+        //    handleConfigurationOption("Client.hashkey",
+        //                              cfgOptions.value("Client.hashkey"));
+    }
+
+    for (auto p : config.cfg())
         handleConfigurationOption(p.first, p.second);
 }
 
@@ -106,6 +120,8 @@ void MeasurementAgent::taskFinished(Task *task) {
                 }
             }
             settings_result = result;
+            if (!obj["x_bbk"].string_value().empty())
+                report_template["x_bbk"] = obj["x_bbk"].string_value();
         }
         sendToClient("configuration", settings_result);
         key_store->save();
@@ -136,6 +152,14 @@ void MeasurementAgent::taskFinished(Task *task) {
         }
     } else if (name == "setSubscription") {
         log() << "setSubscription done";
+    } else if (name == "sendLogToServer") {
+        std::string err;
+        auto obj = json11::Json::parse(result, err);
+        std::string res = "NOK";
+        if (err.empty() && obj["status"].number_value() != 0)
+            res = "OK";
+        sendToClient("setInfo", "{\"logSent\": \"" +
+                     res + "\"}");
     } else {
         log() << "unknown task, ignoring";
     }
@@ -173,6 +197,15 @@ bool MeasurementAgent::isValidHashkey(const std::string &key) {
     return false;
 }
 
+void  MeasurementAgent::sendLogToServer() {
+    std::string url = "/api/devlog";
+    addNewTask(new SingleRequest("sendLogToServer", "frontend-beta.bredbandskollen.se",
+                                 url, accumulated_log.str(), 10.0), this);
+    setLogLimit();
+    log() << "Sent " << accumulated_log.str().size() << " bytes.";
+    accumulated_log.str("");
+}
+
 std::string MeasurementAgent::getDefaultConfig() {
     // Either the client doesn't want settings to be fetched
     // (wserv.hostname is "none"), or we failed to fetch settings.
@@ -193,7 +226,7 @@ std::string MeasurementAgent::getDefaultConfig() {
         key_store->getCookieVal("hash_key", domain);
     if (hashkey.empty()) {
         hashkey = createHashKey();
-        key_store->setCookie("hash_key="+hashkey+";max-age=999999999",
+        key_store->setCookie("hash_key="+hashkey+"; max-age=999999999",
                              domain, "/");
     }
 
@@ -229,7 +262,9 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
                                            const json11::Json &args) {
     log() << "handleMsgFromClient " << method;
     if (method == "clientReady") {
-        sendToClient("agentReady");
+        std::string savedConfig;
+        savedConfig =  json11::Json(cfgOptions).dump();
+        sendToClient("agentReady", savedConfig);
     } else if (method == "getConfiguration") {
         dbg_log() << "Webserver: " << wserv.hostname;
         if (wserv.hostname == "none") {
@@ -266,6 +301,53 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
     } else if (method == "setConfigurationOption") {
         for (auto p : args.object_items())
             handleConfigurationOption(p.first, p.second.string_value());
+
+    } else if (method =="saveConfigurationOption") {
+        for (auto p : args.object_items()) {
+            auto key = p.first, value = p.second.string_value();
+            if (key == "Client.hashkey") {
+                std::string url = wserv_settingsurl;
+
+                if (value.empty()) {
+                    key_store->eraseCookies(wserv.hostname);
+                    key_store->eraseCookies("bredbandskollen.se");
+                    key_store->save();
+                    addNewTask(new SingleRequestTask(url, "msettings",
+                                                     "", wserv), this);
+                    //value = createHashKey();
+                } else if (isValidHashkey(value)) {
+                    key_store->setCookie("hash_key="+value+"; max-age=999999999"
+                                         "; path=/; domain=.bredbandskollen.se",
+                                         "bredbandskollen.se", "/");
+                    if (key_store->save())
+                        err_log() << "cannot save cookies";
+                    else
+                        cfgOptions.erase(key);
+
+                    std::map<std::string, std::string> attrs;
+                    attrs["key"] = value;
+                    HttpClientConnection::addUrlPars(url, attrs);
+                    addNewTask(new SingleRequestTask(url, "msettings",
+                                                     "", wserv), this);
+                } else {
+                    err_log() << "invalid Client.hashkey: " << value;
+                    sendToClient("setInfo", MeasurementTask::
+                                 json_obj("keyRejected", value));
+
+                }
+                //handleConfigurationOption(key, value);
+            }
+            if (value.empty()) {
+                cfgOptions.erase(key);
+            } else {
+                cfgOptions.set(key, value);
+            }
+        }
+        if (!options_filename.empty()) {
+            if (!cfgOptions.saveJsonToFile(options_filename))
+                sendToClient("setInfo", MeasurementTask::json_obj("error",
+                                        "cannot save configuration options"));
+        }
     } else if (method == "saveReport") {
         if (current_test)
             current_test->doSaveReport(args);
@@ -296,8 +378,12 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
                     err_log() << "invalid port number, will use default";
             }
             if (mserver.empty() || !isValidHashkey(key)) {
-                sendToClient("setInfo","{\"error\": "
-                    "\"startTest requires parameters serverUrl and userKey\"}");
+                json11::Json obj = json11::Json::object {
+                    { "error",
+                      "startTest requires parameters serverUrl and userKey" },
+                    { "errno", "X01" }
+                };
+                sendToClient("setInfo", obj.dump());
                 state = MeasurementState::FINISHED;
                 sendTaskComplete("global");
                 return;
@@ -336,8 +422,11 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
         case MeasurementState::ABORTED:
         case MeasurementState::STARTED:
             err_log("got resetTest during measurement");
-            sendToClient("setInfo",
-                "{\"error\": \"got resetTest during measurement\"}");
+            json11::Json obj = json11::Json::object {
+                { "error", "got resetTest during measurement" },
+                { "errno", "X02" }
+            };
+            sendToClient("setInfo", obj.dump());
             break;
         }
     } else if (method == "setSubscription") {
@@ -360,7 +449,8 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
                                          current_ticket, mserv), this);
     } else if (method == "listMeasurements") {
         std::map<std::string, std::string> uargs;
-        uargs["key"] = key_store->getCookieVal("hash_key", wserv.hostname);
+        uargs["key"] = !force_key.empty() ? force_key :
+            key_store->getCookieVal("hash_key", wserv.hostname);
         for (auto p : args.object_items())
             uargs[p.first] = p.second.string_value();
         if (isValidHashkey(uargs["key"])) {
@@ -374,6 +464,14 @@ void MeasurementAgent::handleMsgFromClient(const std::string &method,
         }
     } else if (method == "pingSweep") {
         addNewTask(new PingSweepTask(settings_result, wserv), this);
+    } else if (method == "accumulateLog") {
+        accumulateLog();
+    } else if (method == "appendLog") {
+        std::string l = args["logText"].string_value();
+        if (!l.empty())
+            appendLog(l);
+    } else if (method == "sendLogToServer") {
+        sendLogToServer();
     } else if (method == "terminate") {
         bridge = nullptr;
         setResult("");
@@ -486,7 +584,10 @@ void MeasurementAgent::handleConfigurationOption(const std::string &name,
         report_template["dlength"] = std::to_string(duration);
         report_template["ulength"] = std::to_string(duration);
     } else if (name == "Measure.SpeedLimit") {
-        report_template["speedlimit"] = value;
+        if (value.empty())
+            report_template.erase("speedlimit");
+        else
+            report_template["speedlimit"] = value;
     } else if (name == "Measure.AutoSaveReport") {
         report_template["autosave"] = value;
     } else if (name == "Measure.SettingsUrl") {
@@ -495,6 +596,8 @@ void MeasurementAgent::handleConfigurationOption(const std::string &name,
         wserv_contentsurl = value;
     } else if (name == "Measure.MeasurementsUrl") {
         wserv_measurementsurl = value;
+    } else if (name == "options_file") {
+        // Ignore.
     } else {
         log() << name << ": unknown option";
     }

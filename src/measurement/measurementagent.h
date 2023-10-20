@@ -29,6 +29,13 @@ public:
     void sendTaskComplete(const std::string &t, const std::string &res = "");
     void sendTaskProgress(const std::string &taskname,
                           double speed, double progress);
+    void accumulateLog() {
+        setLogFile(accumulated_log);
+    }
+    void appendLog(const std::string &str) {
+        accumulated_log << "\nAppend " << str.size() << "\n" << str;
+    }
+    void sendLogToServer();
 private:
     std::string getDefaultConfig();
     bool isValidHashkey(const std::string &key);
@@ -49,6 +56,7 @@ private:
     BridgeTask *bridge = nullptr;
     SpeedTest *current_test = nullptr;
     std::string current_ticket;
+    std::ostringstream accumulated_log;
 
     // Initial state is IDLE. When client says "startTest", state becomes
     // STARTED. When test is done, we send "testComplete global" to client
@@ -74,4 +82,7 @@ private:
 
     // Info to be included each time measurement result is sent:
     std::map<std::string, std::string> report_template;
+
+    TaskConfig cfgOptions;
+    std::string options_filename;
 };

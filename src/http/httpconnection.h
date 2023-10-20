@@ -97,6 +97,8 @@ protected:
     bool is_websocket = false;
 private:
     void startWsStream(size_t len, bool is_binary = true);
+    // For fragmented messages:
+    unsigned char current_opcode = 0;
     bool receiving_message = false;
     bool sending_message = false;
     bool output_is_binary = false;

@@ -14,8 +14,7 @@ SOURCES += \
 	$(DIRLEVEL)/http/cookiemanager.cpp \
 	$(DIRLEVEL)/http/httpserverconnection.cpp \
 	$(DIRLEVEL)/http/httprequestengine.cpp \
-	$(DIRLEVEL)/http/websocketbridge.cpp \
-	$(DIRLEVEL)/json11/json11.cpp
+	$(DIRLEVEL)/http/websocketbridge.cpp
 
 OPT_SOURCES += \
 	$(DIRLEVEL)/http/cookiefile.cpp

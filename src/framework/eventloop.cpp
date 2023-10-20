@@ -12,7 +12,7 @@
 #include "serversocket.h"
 
 #ifdef USE_THREADS
-thread_local
+//thread_local
 #endif
 volatile int EventLoop::got_signal = 0;
 
@@ -106,9 +106,12 @@ WorkerProcess *EventLoop::createWorker(Task *parent,
                                        const std::string &log_file_name,
                                        unsigned int channels,
                                        unsigned int wno) {
+    auto old = openFileOnSIGHUP;
     setLogFilename(log_file_name);
     auto logfile = new std::ofstream(log_file_name, std::ios::app);
-    return createWorker(parent, logfile, channels, wno);
+    auto ret = createWorker(parent, logfile, channels, wno);
+    openFileOnSIGHUP = old;
+    return ret;
 }
 
 WorkerProcess *EventLoop::createWorker(Task *parent, std::ostream *log_file,
@@ -270,7 +273,7 @@ void EventLoop::addTask(Task *task, Task *parent) {
         tasks[task] = parent;
         if (parent)
             startObserving(parent, task);
-        if (task->isFinished()) {
+        if (task->terminated()) {
             // Task finished when executing its constructor
             notifyTaskFinished(task);
             return;
@@ -417,7 +420,7 @@ void EventLoop::resetTimer(Task *task, double s) {
     if (s == 0)
         s = task->timerEvent();
     if (s > 0) {
-        auto t = std::chrono::microseconds(toUs(s));
+        auto t = toUs(s);
         timer_queue.insert(std::make_pair(timeNow()+t, task));
     }
 }
@@ -506,7 +509,7 @@ bool EventLoop::run(double timeout_s) {
         while (Task *task = nextTimerToExecute()) {
             double ts = task->timerEvent();
             if (ts > 0) {
-                auto t = std::chrono::microseconds(toUs(ts));
+                auto t = toUs(ts);
                 timer_queue.insert(std::make_pair(timeNow()+t, task));
             }
         }
@@ -659,7 +662,7 @@ void EventLoop::check_finished() {
             } else if (signum == SIGTERM) {
                 err_log() << "got SIGTERM, exit immediately" << std::endl;
                 killChildProcesses(signum);
-                exit(1);
+                exit(0);
             } else {
                 err_log() << "got signal " << signum << ", will exit";
                 killChildProcesses(signum);

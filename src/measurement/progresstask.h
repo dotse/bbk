@@ -87,7 +87,7 @@ protected:
         if (s <= 0.0)
             return 0.0;
 
-        double mbps = n / s * 0.000008;
+        double mbps = static_cast<double>(n) / s * 0.000008;
         if (mbps > 8.0)
             return (mbps * 1.02 + 0.16);
         else

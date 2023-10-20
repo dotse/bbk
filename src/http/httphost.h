@@ -4,13 +4,19 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 class CookieManager;
 
+/// \brief
+/// The host name and port number of a HTTP host.
+///
+/// May also contain a pointer to a cookie jar.
+/// The same CookieManager should
+/// be used for all objects with the same hostname.
 class HttpHost {
 public:
-    // You create and own the cookie manager. The same one should
-    // be used for all objects withe the same hostname.
+    /// You create and own the cookie manager.
     HttpHost(const std::string &hName = std::string(),
              uint16_t sPort = 80,
              const std::string &pHost = std::string(),

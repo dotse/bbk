@@ -126,8 +126,6 @@ bool Engine::addServer(ServerSocket *conn) {
     return true;
 }
 
-// TODO: closedByPeer, connectionFailed
-
 // Hand the SocketConnection object over to us.
 // Will delete the object and return false on immediate failure.
 // Otherwise return true; then either connected or connectionFailed
@@ -337,9 +335,18 @@ bool Engine::run(double max_time) {
     deadline = timeAfter(max_time);
     yield_called = false;
 
-    for (auto p : connectionStore)
-        if (p.second->hasExpired(deadline))
-            killConnection(p.first);
+    {
+        // Find sockets that will expire and delete them.
+        // Can't delete them while looping over connectionStore since
+        // connectionStore gets modified when Socket objects are deleted.
+        std::vector<int> expired;
+        for (auto p : connectionStore)
+            if (p.second->hasExpired(deadline))
+                expired.push_back(p.first);
+
+        for (auto fd : expired)
+            killConnection(fd);
+    }
 
     while (!yield_called) {
 
