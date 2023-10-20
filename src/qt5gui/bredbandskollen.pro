@@ -33,6 +33,7 @@ SOURCES += main.cpp \
         ../http/http_common.cpp \
         ../http/httpclientconnection.cpp \
         ../http/httpserverconnection.cpp \
+        ../http/singlerequest.cpp \
 	../json11/json11.cpp \
 	../measurement/measurementtask.cpp \
 	../measurement/singlerequesttask.cpp \
