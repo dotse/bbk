@@ -30,7 +30,7 @@ namespace {
 }
 
 std::string createAndGetAppDir(std::string dir) {
-    std::string home;
+    std::string home, xdg_data_home;
 #ifdef _WIN32
     if (dir.empty()) {
         if (!std::getenv("HOMEDRIVE") || !std::getenv("HOMEPATH"))
@@ -46,11 +46,21 @@ std::string createAndGetAppDir(std::string dir) {
         home = std::getenv("HOME");
 #ifdef __linux__
         if (!std::getenv("XDG_DATA_HOME")) {
-            dir = home + "/.local/share/bredbandskollen";
+            xdg_data_home = home + "/.local/share";
         } else {
-            std::string xdg_data_home = std::getenv("XDG_DATA_HOME");
-            dir = xdg_data_home + "/bredbandskollen";
+            xdg_data_home = std::getenv("XDG_DATA_HOME");
         }
+        dir = xdg_data_home + "/bredbandskollen";
+        // Make sure xdg_data_home exists
+        for (
+            size_t end = xdg_data_home.find('/', 1), prev = 0;
+            prev != std::string::npos;
+            prev = end, end = xdg_data_home.find('/', end+1)
+        ) {
+          if(mkdir(xdg_data_home.substr(0, end).c_str(), 0755) && errno != EEXIST) {
+              return "";
+          }
+        };
 #else
         // Fall back to $HOME for other platforms
         dir = home + "/.bredbandskollen";
