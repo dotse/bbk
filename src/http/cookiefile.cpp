@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Internetstiftelsen
+// Copyright (c) 2019 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include <fstream>

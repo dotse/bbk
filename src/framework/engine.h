@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 // This class implements a network engine, managing sockets.

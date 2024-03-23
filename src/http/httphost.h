@@ -1,4 +1,4 @@
-// Copyright (c) 2017 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2017 The Swedish Internet Foundation
 // Written by Göran Andersson <goran@init.se>
 
 #pragma once
