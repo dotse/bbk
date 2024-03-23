@@ -1,4 +1,4 @@
-// Copyright (c) 2017 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2017 The Swedish Internet Foundation
 // Based on public domain code.
 // Modified by Göran Andersson <goran@init.se>
 
