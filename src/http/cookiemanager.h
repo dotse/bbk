@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Internetstiftelsen
+// Copyright (c) 2019 The Swedish Internet Foundation
 // Written by Göran Andersson <goran@init.se>
 
 // This class stores cookies in memory only.

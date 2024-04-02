@@ -1,3 +1,5 @@
+# Bredbandskollen CLI
+
 The `src` directory contains the source code to the command line version of
 Bredbandskollen CLI, a bandwidth measurement tool.
 
@@ -44,7 +46,7 @@ The directories framework and http contain a basic C++ network programming
 framework with support for "tasks" and "timers". Some of the features are
 explained by demo programs in the examples directory.
 The [API documentation](https://www.dsso.se/bbkapi/annotated.html)
-can be built from the source code.  
+can be built from the source code using [Doxygen](https://www.doxygen.nl/).
 
 The directory `json11` contains a JSON library for C++ provided by Dropbox, Inc.
 
@@ -118,3 +120,13 @@ Install gmake, llvm, clang, and gnutls using pkgin, then go to src/cli and do
 or
 
     gmake GNUTLS=1
+
+# License
+
+Copright © 2018 The Swedish Internet Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
