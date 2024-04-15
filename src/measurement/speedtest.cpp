@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include <iomanip>
@@ -15,7 +15,8 @@
 #include "tickettask.h"
 #include "infotask.h"
 #include "downloadtask.h"
-// Alternative download measurement: #include "wsdownloadtask.h"
+// Alternative download measurement:
+#include "wsdownloadtask.h"
 #include "uploadtask.h"
 // Alternative upload measurement: #include "wsuploadtask.h"
 // Alternative to some parts of infotask:
@@ -28,6 +29,8 @@ SpeedTest::SpeedTest(MeasurementAgent *agent, const HttpHost &mserver,
     mserv(mserver),
     report(report_data)
 {
+    bytesSentAtStart = SocketConnection::totBytesSent();
+    bytesRecAtStart = SocketConnection::totBytesReceived();
     killChildTaskWhenFinished();
     upload_duration = std::stod(report["ulength"]);
     download_duration = std::stod(report["dlength"]);
@@ -149,8 +152,11 @@ void SpeedTest::taskFinished(Task *task) {
 
     if (name == "ticket") {
         if (result.empty()) {
-            the_agent->sendToClient("setInfo",
-                "{\"error\": \"no ticket from measurement server\"}");
+            json11::Json obj = json11::Json::object {
+                { "error", "no network access to server" },
+                { "errno", "C01" }
+            };
+            the_agent->sendToClient("setInfo", obj.dump());
             setResult("");
         } else {
             tstr = result;
@@ -232,6 +238,16 @@ void SpeedTest::taskFinished(Task *task) {
             t->set_speedlimit(speed_limit);
         addNewTask(t, this);
     } else if (name == "saveReport") {
+        uint64_t totBytesSent = SocketConnection::totBytesSent() - bytesSentAtStart;
+        uint64_t totBytesReceived = SocketConnection::totBytesReceived() - bytesRecAtStart;
+
+        json11::Json bytesInfo = json11::Json::object {
+            { "totBytesReceived", std::to_string(totBytesReceived)},
+            { "totBytesSent", std::to_string(totBytesSent) }
+        };
+
+        the_agent->sendToClient("setInfo", bytesInfo.dump());
+
         std::string err;
         auto obj = json11::Json::parse(result, err);
         if (!result.empty() && err.empty()) {
@@ -260,6 +276,7 @@ void SpeedTest::taskFinished(Task *task) {
     } else if (name == "warmup") {
         the_agent->sendToClient("taskStart", MeasurementTask::
                                 json_obj("task", "download"));
+        //WsDownloadTask *t = new WsDownloadTask(tstr, mserv, initial_no_dconn,
         DownloadTask *t = new DownloadTask(tstr, mserv, initial_no_dconn,
                                            max_no_dconn, download_duration);
         log() << "t->set_speedlimit " << speed_limit;

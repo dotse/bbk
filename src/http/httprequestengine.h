@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
@@ -135,5 +135,3 @@ private:
     std::set<SocketConnection *> idle_connections;
     std::map<HttpClientConnection *, HREJob *>  active_jobs;
 };
-
-

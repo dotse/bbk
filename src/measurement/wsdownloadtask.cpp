@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include "wsdownloadtask.h"
@@ -50,6 +50,7 @@ void WsDownloadTask::newRequest(HttpClientConnection *conn) {
         //conn->dbgOn();
 }
 
+#include <unistd.h>
 bool WsDownloadTask::nextRequest(HttpConnection *conn) {
     if (size_t size = loadSize()) {
         conn->sendWsMessage("download " + std::to_string(size));

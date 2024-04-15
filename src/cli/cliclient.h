@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
@@ -7,7 +7,6 @@
 #include <sstream>
 
 #include "../framework/logger.h"
-#include "../framework/taskconfig.h"
 #include "../framework/synchronousbridge.h"
 
 class CliClient : public Logger, public SynchronousClient {
@@ -42,11 +41,15 @@ private:
     std::string limiter = " ";
     std::ostringstream current_line;
     std::string current_header;
+    bool out_is_tty, out_quiet;
     // Set to true during upload and download:
     bool in_progress_task = false;
     // It latency result arrives asynchronously during
     // upload or download, we must wait until the end to show it:
     bool deferred_latency = false;
+
+    // If user wants to set persistent options, we shoud save them only once.
+    bool savedOptions = false;
 
     const TaskConfig the_config;
 };

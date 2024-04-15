@@ -58,5 +58,5 @@ std::string MeasurementTask::calculateLatency(std::vector<double> &samples) {
 
     double latency_sum = std::accumulate(samples.cbegin(),
                                          samples.cbegin()+n, 0.0);
-    return fValue(1000.0 * latency_sum / n);
+    return fValue(1000.0 * latency_sum / static_cast<double>(n));
 }

@@ -1,3 +1,5 @@
+# Bredbandskollen CLI
+
 The `src` directory contains the source code to the command line version of
 Bredbandskollen CLI, a bandwidth measurement tool.
 
@@ -6,10 +8,6 @@ Bredbandskollen CLI, a bandwidth measurement tool.
 
 
 # How to build Bredbandskollen's CLI client
-
-Note: Pre-compiled binaries for the most common platforms can be downloaded from
-
-    http://www.bredbandskollen.se/en/bredbandskollen-cli/
 
 On Windows, open
 
@@ -51,17 +49,19 @@ the above steps. For more information, run it with the --help argument or read
 The directories framework and http contain a basic C++ network programming
 framework with support for "tasks" and "timers". Some of the features are
 explained by demo programs in the examples directory.
+The [API documentation](https://www.dsso.se/bbkapi/annotated.html)
+can be built from the source code using [Doxygen](https://www.doxygen.nl/).
 
-The directory json11 contains a JSON library for C++ provided by Dropbox, Inc.
+The directory `json11` contains a JSON library for C++ provided by Dropbox, Inc.
 
-The directory measurement contains the bandwidth measurement engine, built atop
+The directory `measurement` contains the bandwidth measurement engine, built atop
 the framework.
 
-The directory cli contains a command line interface to the measurement engine.
+The directory `cli` contains a command line interface to the measurement engine.
 
-The directory qt5gui contains the source code for a GUI to the measurement
+The directory `qt5gui`     contains the source code for a GUI to the measurement
 engine. To build it, Qt5 and QWebEngine are required. You must run the Qt5
-version of qmake to create a Makefile before running make to build the GUI.
+version of `qmake` to create a Makefile before running `make` to build the GUI.
 
 # Platform Notes
 
@@ -69,8 +69,9 @@ version of qmake to create a Makefile before running make to build the GUI.
 
 The code has not been thoroughly tested on Windows. Pull requests are welcome.
 
-Visual Studio 2015 or later is required. Visual Studio 2017 Community can be
-downloaded from https://visualstudio.microsoft.com/
+Visual Studio 2015 or later is required, as are the components
+MSVC v140 (VS 2015 C++ build tools) and Windows 10 SDK. Visual Studio 2022 Community
+can be downloaded from https://visualstudio.microsoft.com/
 
 Open src/wincli/wincli.sln in Visual Studio, then select "Build".
 
@@ -123,3 +124,13 @@ Install gmake, llvm, clang, and gnutls using pkgin, then go to src/cli and do
 or
 
     gmake GNUTLS=1
+
+# License
+
+Copright © 2018 The Swedish Internet Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

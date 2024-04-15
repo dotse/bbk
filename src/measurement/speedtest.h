@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
@@ -42,4 +42,7 @@ private:
     double speed_limit = 0.0;
     unsigned int initial_no_dconn = 10, initial_no_uconn = 4;
     unsigned int max_no_dconn = 100, max_no_uconn = 100;
+
+    uint64_t bytesSentAtStart;
+    uint64_t bytesRecAtStart;
 };

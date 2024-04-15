@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #ifdef _WIN32
@@ -140,19 +140,24 @@ PollState HttpConnection::incoming_ws_header(const char *buf, size_t buffer_pos)
             msg_len = ntohl(*reinterpret_cast<const uint32_t *>(msg+6));
     }
 
+    incoming_is_masked = msg[1] & 0x80;
+    if (incoming_is_masked)
+        hdr_len += 4;
+
     if (buffer_pos < hdr_len) {
         buffer.append(buf, buffer_pos);
         return (sending_message ? PollState::READ_WRITE :  PollState::READ);
     }
 
+    if (incoming_is_masked)
+        memcpy(incoming_mask, msg + hdr_len - 4, 4);
+
     unsigned char opcode = msg[0] & 0xf;
-    //log() << "OPCODE: " << (int)opcode << " LEN: " << msg_len << " HLEN: " << hdr_len << " <" << (int)msg[0] << "><" << (int)msg[1] << "><" << (int)msg[2] << "><" << (int)msg[3] << "> msg=" << (unsigned long) msg;
-    //bool is_final = (msg[0] & 0x80);
-    incoming_is_masked = msg[1] & 0x80;
-    if (incoming_is_masked) {
-        memcpy(incoming_mask, msg + hdr_len, 4);
-        hdr_len += 4;
-    }
+    bool is_final = (msg[0] & 0x80);
+    if (opcode)
+        current_opcode = is_final ? 0 : opcode;
+    else
+        opcode = current_opcode;
 
     HttpTask *owner_task = dynamic_cast<HttpTask *>(owner());
     if (!owner_task)
@@ -189,7 +194,8 @@ PollState HttpConnection::incoming_ws_header(const char *buf, size_t buffer_pos)
         // Pong, ignore.
         break;
     default:
-        err_log() << "Bad websocket opcode";
+        err_log() << "Bad websocket opcode " << static_cast<int>(msg[0])
+                  << ' ' << static_cast<int>(msg[1]);
         return PollState::CLOSE;
     }
     buffer_pos -= hdr_len;

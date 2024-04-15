@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #ifdef _WIN32
@@ -41,7 +41,7 @@ CliClient::CliClient(const TaskConfig &config) :
     }
     report.measurement_server = the_config.value("server");
     if (the_config.value("pingsweep") != "1" &&
-        the_config.value("list_measurements").empty()) {
+        !the_config.hasKey("list_measurements")) {
         if (out_quiet) {
             // Block all output:
             out->clear(std::istream::eofbit);
@@ -116,7 +116,8 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
                 if (srv["type"].string_value() == the_config.value("mtype")) {
                     std::string hostname = srv["url"].string_value();
                     auto pos = hostname.find(':');
-                    if (pos != std::string::npos) {
+                    if (the_config.value("mtype") != "ipv6" &&
+                        pos != std::string::npos) {
                         server_port = std::stoi(hostname.substr(pos+1));
                         hostname.resize(pos);
                     }
@@ -216,15 +217,63 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
             return_msgs.push_back(BridgeTask::msgToAgent("saveReport", "{}"));
         }
     } else if (event == "agentReady") {
-        if (!the_config.value("list_measurements").empty()) {
+        // Translate from "user-friendly" option name to agent's name:
+        static const std::map<std::string, std::string> configMap {
+            { "speedlimit", "Measure.SpeedLimit" },
+            { "duration",  "Measure.LoadDuration" },
+            { "iptype", "Measure.IpType" },
+            { "hashkey", "Client.hashkey" }
+        };
+
+        std::map<std::string, std::string> newConfig;
+        if (!savedOptions) {
+            savedOptions = true;
+            auto range = the_config.range("configure");
+            for (auto newp = range.first; newp != range.second; ++newp) {
+                std::string opt = newp->second;
+                auto pos = opt.find('=');
+                std::string attr = opt.substr(0, pos);
+                auto pp = configMap.find(attr);
+                if (pp != configMap.end()) {
+                    std::string value = (pos == std::string::npos) ? "1" :
+                        opt.substr(pos+1);
+                    newConfig[pp->second] = value;
+                }
+            }
+            if (!newConfig.empty()) {
+                json11::Json args = newConfig;
+                auto mesg = BridgeTask::msgToAgent("saveConfigurationOption",
+						   args.dump());
+                return_msgs.push_back(mesg);
+                // Let the agent send agentReady again, with updated options:
+                return_msgs.push_back(BridgeTask::msgToAgent("clientReady"));
+                return;
+            }
+        }
+
+        // Loop over saved configuration options:
+        for (auto &p : arg_obj.object_items()) {
+            std::string attr = p.first;
+            std::string value = p.second.string_value();
+            if (the_config.value(attr) != "override")
+                newConfig[attr] = value;
+        }
+        if (!newConfig.empty()) {
+            json11::Json args = newConfig;
+            auto mesg = BridgeTask::msgToAgent("setConfigurationOption",
+					       args.dump());
+            return_msgs.push_back(mesg);
+        }
+
+        if (the_config.hasKey("list_measurements")) {
             std::map<std::string, std::string> pars;
             pars["max"] = the_config.value("list_measurements");
-            if (!the_config.value("list_from").empty())
+            if (the_config.hasKey("list_from"))
                 pars["from"] = the_config.value("list_from");
             // pars["key"] = ...
             json11::Json args = json11::Json(pars);
             return_msgs.push_back(BridgeTask::msgToAgent("listMeasurements",
-                                                 args.dump()));
+                                                         args.dump()));
         } else {
             return_msgs.push_back(BridgeTask::msgToAgent("getConfiguration"));
         }
@@ -310,7 +359,12 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
             std::string value = p.second.string_value();
             if (attr == "error") {
                 if (!value.empty()) {
-                    *out << "fatal error: " << value << std::endl;
+                    std::string ecode = arg_obj["errno"].string_value();
+                    if (ecode.empty())
+                        *out << "fatal error: " << value << std::endl;
+                    else
+                        *out << "fatal error: " << value << " (error code "
+                             << ecode << ")" << std::endl;
                     break;
                 }
             } else if (attr == "ticket") {

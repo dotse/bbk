@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
@@ -25,7 +25,10 @@ public:
     double timerEvent() override;
 
     void newRequest(HttpClientConnection *conn) override {
-        conn->get(_url);
+        if (_post_data.empty())
+            conn->get(_url);
+        else
+            conn->post(_url, _post_data);
     }
 
     bool requestComplete(HttpClientConnection *conn) override;

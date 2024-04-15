@@ -1,31 +1,25 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #pragma once
 
-// What we want to do with a Socket object:
-//   NONE - nothing right now, but keep it open for later
-//   READ_BLOCKED - don't check for incoming data/close, but check for
-//                  writability if wantToSend().
-//   CONNECTING - waiting for asynchronous connect to complete
-//   CLOSE - close it gracefully
-//   KEEPALIVE - put the connected socket in keep-alive cache
-//   KILL - terminate it immediately, discarding buffers
-//   READ - check for incoming data/close
-//   WRITE - check for close, and for writability
-//   READ_WRITE - check for incoming data/close, and for writability
+/*! \file */
 
+/// \enum PollState
+/// After doing an operation on a socket, a PollState must be returned to the
+/// network engine to describe what you want it to do next with the socket.
 enum class PollState {
-    NONE,
-    READ_BLOCKED,
-    CONNECTING,
+    NONE, /**< Do nothing right now, but keep socket open for later. */
+    READ_BLOCKED, /**< Don't check for incoming data/close, but check for
+                       writability if wantToSend(). */
+    CONNECTING, /**< Wait for asynchronous connect to complete. */
 #ifdef USE_GNUTLS
-    TLS_HANDSHAKE,
+    TLS_HANDSHAKE, /**< Wait for TLS handshake to complete. */
 #endif
-    CLOSE,
-    KEEPALIVE,
-    KILL,
-    READ,
-    WRITE,
-    READ_WRITE
+    CLOSE, /**< Close the socket gracefully. */
+    KEEPALIVE, /**< Put the connected socket in keep-alive cache. */
+    KILL, /**< Terminate connection immediately, discarding buffers. */
+    READ, /**< Check for incoming data/close. */
+    WRITE, /**< Check for close, and for writability. */
+    READ_WRITE /**< Check for incoming data/close, and for writability. */
 };

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #ifdef _WIN32
@@ -352,6 +352,7 @@ void HttpClientConnection::ws_get(const std::string &url) {
         url + " HTTP/1.1\r\nHost: " + real_hostname +
         "\r\nSec-WebSocket-Key: " + std::string(dst, 24) +
         "\r\nSec-WebSocket-Version: 13\r\nUpgrade: websocket"
+        "\r\nConnection: Upgrade"
         "\r\n" + owner_task->httpHeaderLines(url) + "\r\n";
     static char rkey[] = "012345678901234567890123456=";
     static SHA1 sha1(rkey);

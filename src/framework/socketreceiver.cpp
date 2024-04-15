@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #ifndef _WIN32
@@ -6,7 +6,7 @@
 #include "socketreceiver.h"
 
 SocketReceiver::SocketReceiver(Task *task, int sock, pid_t peer_pid) :
-    ServerSocket("SocketReceiver", task, sock),
+    ServerSocket(sock, "SocketReceiver", task),
     peer(peer_pid) {
 
     empty_data.iov_base = nullptr;
@@ -73,26 +73,22 @@ thread_local
     dbg_log() << "Received socket " << newfd << " from " << ip
               << " port " << port;
 
-    return owner()->newClient(newfd, ip, port, this);
+    SocketConnection *conn = owner()->newClient(newfd, ip, port, this);
+    if (!conn)
+        closeSocket(newfd);
+    return conn;
 }
 
-bool SocketReceiver::passSocketToPeer(int fd) {
+int SocketReceiver::passSocketToPeer(int fd) {
     memcpy(CMSG_DATA(cmsg), &fd, sizeof(fd));
 
     log() << "passing fd " << fd << " to peer";
-    ssize_t ret = sendmsg(socket(), &fdpass_msg, MSG_DONTWAIT);
-    closeSocket(fd);
-    if (ret < 0) {
-        if (errno == EAGAIN) {
-            log() << "cannot pass socket: job queue full";
-            // The peer is probably broken. Kill it.
-            closeMe();
-        } else {
-            errno_log() << "cannot pass socket";
-        }
-        return false;
-    }
-    return true;
+    int ret;
+    if (sendmsg(socket(), &fdpass_msg, MSG_DONTWAIT) < 0)
+        ret = errno;
+    else
+        ret = 0;
+    return ret;
 }
 
 ssize_t SocketReceiver::passMessageToPeer(const char *buf, size_t len) {

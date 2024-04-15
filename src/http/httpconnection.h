@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 // This class implements HTTP functionality common to server and client,
@@ -97,6 +97,8 @@ protected:
     bool is_websocket = false;
 private:
     void startWsStream(size_t len, bool is_binary = true);
+    // For fragmented messages:
+    unsigned char current_opcode = 0;
     bool receiving_message = false;
     bool sending_message = false;
     bool output_is_binary = false;

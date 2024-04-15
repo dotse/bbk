@@ -1,4 +1,4 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #ifdef _WIN32
@@ -37,11 +37,15 @@ SocketConnection *ServerSocket::incoming() {
     }
     if (!setNonBlocking(fd)) {
         log() << "cannot set non-blocking " << fd;
+        closeSocket(fd);
         return nullptr;
     }
     uint16_t port;
     const char *ip = getIp(reinterpret_cast<sockaddr *>(&remoteaddr), &port);
     log() << "Incoming socket " << fd << " from " << ip << " port " << port;
 
-    return owner()->newClient(fd, ip, port, this);
+    SocketConnection *conn = owner()->newClient(fd, ip, port, this);
+    if (!conn)
+        closeSocket(fd);
+    return conn;
 }

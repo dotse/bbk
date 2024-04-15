@@ -22,7 +22,7 @@
     <ProjectGuid>{AFDCBCD7-E513-4D46-A468-C750B5A2FDE2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>wincli</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -180,6 +180,7 @@
     <ClInclude Include="..\http\httptask.h" />
     <ClInclude Include="..\http\http_common.h" />
     <ClInclude Include="..\http\sha1.h" />
+    <ClInclude Include="..\http\singlerequest.h" />
     <ClInclude Include="..\http\webservertask.h" />
     <ClInclude Include="..\http\websocketbridge.h" />
     <ClInclude Include="..\json11\json11.hpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="..\http\httptask.cpp" />
     <ClCompile Include="..\http\http_common.cpp" />
     <ClCompile Include="..\http\sha1.cpp" />
+    <ClCompile Include="..\http\singlerequest.cpp" />
     <ClCompile Include="..\http\webservertask.cpp" />
     <ClCompile Include="..\http\websocketbridge.cpp" />
     <ClCompile Include="..\json11\json11.cpp" />

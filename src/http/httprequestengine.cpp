@@ -64,7 +64,7 @@ double HttpRequestEngine::timerEvent() {
 }
 
 void HttpRequestEngine::newRequest(HttpClientConnection *conn) {
-    dbg_log() << "Ready for new request, queue size=" << incoming_jobs.size();
+    dbg_log() << "Ready for a new request, queue size=" << incoming_jobs.size();
 
     auto p = active_jobs.find(conn);
     if (p != active_jobs.end()) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Internetstiftelsen
+// Copyright (c) 2019 The Swedish Internet Foundation
 // Written by Göran Andersson <goran@init.se>
 
 // This class stores cookies in memory only.
@@ -34,6 +34,8 @@ public:
     bool empty() const {
         return store.empty();
     }
+
+    void eraseCookies(const std::string &domain);
 
     // Store persistently, return true on success
     virtual bool save();

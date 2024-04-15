@@ -1,36 +1,5 @@
-// Copyright (c) 2018 IIS (The Internet Foundation in Sweden)
+// Copyright (c) 2018 The Swedish Internet Foundation
 // Written by Göran Andersson <initgoran@gmail.com>
-
-// A SocketConnection object represents a socket connection. Inherit from this
-// class to implement a "protocol" for the connection, i.e. when/what to
-// read/write through the connection.
-//
-// Each SocketConnection is owned by a Task object. SocketConnection objects
-// will be added to the network Engine (a part of the EventLoop) through the
-// task's addConnection method.
-//
-// The subclass will be notified through callback functions when
-// anything happens on the socket, i.e. if the socket has been closed, if data
-// has arrived, or if the socket is writable.
-// You define the callback functions by overloading the below virtual functions.
-// All operations will be performed asynchronously (non-blocking) except for
-// dns lookups, which are performed synchronously (blocking).
-//
-// Note! You _must_ create the SocketConnection objects with new. The ownership
-// will then be passed to the network engine.
-// You are not allowed to delete a SocketConnection object.
-// We will delete it when the connection has been closed, which will be
-//
-//  1) If you order us to close it by returning CLOSE, KEEPALIVE or KILL from
-//     a callback, or
-//
-//  2) After the closedByPeer callback, if the connection has been
-//     closed by peer.
-//
-//  3) After the connectionFailed callback, if the connection couldn't
-//     be established in the first place.
-//
-// The owner task will be notified before the object is deleted.
 
 #pragma once
 
@@ -41,13 +10,47 @@
 #include <gnutls/gnutls.h>
 #endif
 
+/// \brief
+/// This class implements low-level socket connection operations.
+/// Inherit from it to implement protocols like HTTP.
+///
+/// A SocketConnection object represents a socket connection. Inherit from this
+/// class to implement a "protocol" for the connection, i.e. when/what to
+/// read/write through the connection.
+///
+/// Each SocketConnection is owned by a Task object. SocketConnection objects
+/// will be added to the network Engine (a part of the EventLoop) through the
+/// task's addConnection method.
+///
+/// The subclass will be notified through callback functions when
+/// anything happens on the socket, i.e. if the socket has been closed, if data
+/// has arrived, or if the socket is writable.
+/// You define the callback functions by overloading the below virtual functions.
+/// All operations will be performed asynchronously (non-blocking) except for
+/// dns lookups, which are performed synchronously (blocking).
+///
+/// Note! You _must_ create the SocketConnection objects with new. The ownership
+/// will then be passed to the network engine.
+/// You are not allowed to delete a SocketConnection object.
+/// We will delete it when the connection has been closed, which will be
+///
+///  1) If you order us to close it by returning CLOSE, KEEPALIVE or KILL from
+///     a callback, or
+///
+///  2) After the closedByPeer callback, if the connection has been
+///     closed by peer.
+///
+///  3) After the connectionFailed callback, if the connection couldn't
+///     be established in the first place.
+///
+/// The owner task will be notified before the object is deleted.
 class SocketConnection : public Socket {
     friend class Engine;
 public:
-    // Create a SocketConnection owned by the given Task. The network Engine
-    // will connect to the given hostname/port, and notify through the below
-    // method when the connection is ready.
-    // If iptype is 4, prefer ipv4. If iptype is 6, prefer ipv6.
+    /// Create a SocketConnection owned by the given Task. The network Engine
+    /// will connect to the given hostname/port, and notify through the below
+    /// method when the connection is ready.
+    /// If iptype is 4, prefer ipv4. If iptype is 6, prefer ipv6.
     SocketConnection(const std::string &label, Task *owner,
                      const std::string &hostname, uint16_t port,
                      uint16_t iptype = 0, struct addrinfo *local_addr=nullptr);
@@ -58,16 +61,24 @@ public:
             gnutls_deinit(session);
         }
     }
+
+    /// Notify that the connection will be encrypted (SSL).
     void enableTLS() {
         use_tls = true;
     }
+
+    /// Return true if the connection will be encrypted (SSL).
     bool is_tls() const {
         return use_tls;
     }
+
+    /// Store SSL session in cache.
     gnutls_session_t cache_session() {
         session_initialized = false;
         return session;
     }
+
+    /// Reuse cached SSL session.
     void insert_cached_session(gnutls_session_t &old_session) {
         session_initialized = true;
         use_tls = true;
@@ -77,108 +88,166 @@ public:
     }
 #endif
 
-    // Callback, will be called when the connection is established.
-    // You must not return "CONNECTING".
+    /// \brief
+    /// Will be called when the connection is established.
+    ///
+    /// Override it to start sending data when the connection is ready.
+    ///
+    /// If a connection couldn't be established,
+    /// SocketConnection::connectionFailed will be called instead.
+    /// You must not return PollState::CONNECTING.
     virtual PollState connected() {
         return PollState::CLOSE;
     }
 
-    // Callback, will be called instead of the above if we couldn't
-    // establish a connection.
+    /// Will be called if the connection couldn't be established.
     virtual void connectionFailed(const std::string &err_msg) {
         log() << "connection failed: " << err_msg;
     }
 
-    // Callback, called when the socket has been closed by peer:
-    // May be called in states READ, WRITE, READ_WRITE
+    /// Called when the socket has been closed by peer:
+    /// May be called in states READ, WRITE, READ_WRITE
     virtual void closedByPeer();
 
-    // Callback, called when data has arrived; len > 0.
-    // Return value will be the new state.
-    // May be called in states READ, READ_WRITE
-    // The buffer is owned by us. However, you are allowed
-    // to modify the contents of the buffer and you may also use
-    // it in the asyncSendData call.
+    /// \brief
+    /// Callback, called when data has arrived; len > 0.
+    ///
+    /// May be called in states READ, READ_WRITE. Override this method to
+    /// handle the data. Return value should be the new state.
+    ///
+    /// The buffer is owned by the implementation. However, you are allowed
+    /// to modify the contents of the buffer and you may also use
+    /// it in the asyncSendData call.
     virtual PollState readData(char *, size_t ) {
         return PollState::CLOSE;
     }
 
-    // If peer sends data when we're not in state READ/READ_WRITE, this
-    // function will be called. Default is for the socket to be closed.
-    // If you return READ, any remaining async_send data will be discarded.
+    /// \brief
+    /// Peer has sent data when it wasn't supposed to.
+    ///
+    /// If peer sends data when we're not in state READ/READ_WRITE, this
+    /// function will be called. Default is for the socket to be closed.
+    /// If you return READ, any remaining async_send data will be discarded.
     virtual PollState unexpectedData(char *buf, size_t len);
 
-    // Callback, called when socket is writable.
-    // Return value is the new state.
-    // May be called in states WRITE, READ_WRITE
+    /// \brief
+    /// Callback, called when socket is writable.
+    ///
+    /// May be called in states PollState::WRITE and PollState::READ_WRITE.
+    /// Override it to write data.
+    /// Return value should be the new state. Do not return PollState::WRITE or
+    /// PollState::READ_WRITE except after a write operation where
+    /// all data couldn't be sent immediately.
     virtual PollState writeData() {
         return PollState::CLOSE;
     }
 
-    // Try to send len bytes from the given buffer.
-    // Return the amount that could be sent immediately.
-    // Please understand that the return value might be < len.
-    // To safely get all data sent, you should use the below async
-    // function instead. However, if you need to send large
-    // amounts of data ("large" as in "no upper limit") as fast
-    // as possible, this is the function to use.
+    /// \brief
+    /// Try to send len bytes from the given buffer. Return the amount sent.
+    ///
+    /// More accurately, this method will return the number of bytes that
+    /// could be copied into the socket's send buffer.
+    ///
+    /// Please understand that the return value might be < len.
+    /// To safely get all data sent, you should use the
+    /// SocketConnection::asyncSendData
+    /// function instead. However, if you need to send large
+    /// amounts of data ("large" as in "no upper limit") as fast
+    /// as possible, this is the function to use.
     size_t sendData(const char *buf, size_t len);
 
 #ifdef USE_WEBROOT
     size_t sendFileData(int fd, size_t len);
 #endif
 
-    // Helper function which you may call only during the
-    // execution of the above callbacks:
-    //   connected / readData / writeData.
-    // Send len bytes from the given buffer.
-    // The callback closedByPeer
-    // might be executed before all data was sent.
-    // If you need to send "unlimited" amounts of data, you
-    // cant use asyncSendData; instead you must use sendData.
+    /// \brief
+    /// Send data to peer as soon as possible.
+    ///
+    /// Helper function which you may call only during the
+    /// execution of the callbacks SocketConnection::connected,
+    /// SocketConnection::readData, and SocketConnection::writeData.
+    ///
+    /// Send len bytes from the given buffer.
+    /// The callback SocketConnection::closedByPeer
+    /// might be executed before all data was sent.
+    ///
+    /// If you need to send "unlimited" amounts of data, you cant use
+    /// this method; instead you must use SocketConnection::sendData.
     void asyncSendData(const char *buf, size_t len);
+
+    /// \brief
+    /// Send data to peer as soon as possible.
+    ///
+    /// Helper function which you may call only during the
+    /// execution of the callbacks SocketConnection::connected,
+    /// SocketConnection::readData, and SocketConnection::writeData.
+    ///
+    /// Send len bytes from the given buffer.
+    /// The callback SocketConnection::closedByPeer
+    /// might be executed before all data was sent.
+    ///
+    /// If you need to send "unlimited" amounts of data, you cant use
+    /// this method; instead you must use SocketConnection::sendData.
     void asyncSendData(const std::string data) {
         asyncSendData(data.c_str(), data.size());
     }
 
+    /// \brief
+    /// Return number of bytes left to send after calling
+    /// SocketConnection::asyncSendData.
     size_t asyncBufferSize() const {
         return to_send.size();
     }
 
-    // Number of bytes sent by current thread
+    /// Number of bytes sent by current thread
     static uint64_t totBytesSent() {
         return tot_bytes_sent;
     }
+
+    /// Number of bytes recieved by current thread
     static uint64_t totBytesReceived() {
         return tot_bytes_received;
     }
+
+    /// \brief
+    /// Reset counter for SocketConnection::totBytesSent
+    /// and SocketConnection::totBytesReceived.
     static void resetByteCounter() {
         tot_bytes_sent = 0;
         tot_bytes_received = 0;
     }
+
+    /// Return peer's IP address.
     const std::string &peerIp() const {
         return peer_ip;
     }
+
+    /// Return peer's port number.
     uint16_t peerPort() const {
         return peer_port;
     }
+
+    /// Enable debug output of data sent and received.
     void dbgOn(bool b = true) {
         debugging = b;
     }
+
+    /// Return true if socket debugging is enabled.
     bool dbgIsOn() {
         return debugging;
     }
 protected:
-    // If fd is the socket descriptor of an already established connection,
-    // you may let us manage the connection by calling this constructor.
-    // fd will probably be a client socket connected through a ServerSocket.
+
+    /// If fd is the socket descriptor of an already established connection,
+    /// you may let us manage the connection by calling this constructor.
+    /// fd will probably be a client socket connected through a ServerSocket.
     SocketConnection(const std::string &label, Task *owner, int fd,
                      const char *ip, uint16_t port);
 
-    // Send a "message" to owner task. It will be executed as
-    //     msgFromConnection(this, msg)
-    // in the owner task. This is useful if you want to create SocketConnection
-    // subclasseses that work with any Task.
+    /// Send a "message" to owner task. It will be executed as
+    /// Task::msgFromConnection(this, msg) in the owner task.
+    /// This is useful if you want to create SocketConnection
+    /// subclasseses that work with any Task.
     PollState tellOwner(const std::string &msg);
 
 private:
