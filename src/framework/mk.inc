@@ -33,7 +33,7 @@ CXXFLAGS += -I/usr/pkg/include
 LIBS += -Wl,-R/usr/pkg/lib -L/usr/pkg/lib
 endif
 
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++14
 
 LINK ?= $(CXX)
 
@@ -61,7 +61,7 @@ LIBS += -L/usr/local/lib -lgnutls
 endif
 ifeq ($(THREADS),1)
 CXXFLAGS += -DUSE_THREADS
-LIBS += -lpthread
+LIBS += -pthread
 endif
 ifeq ($(LOGLEVEL),)
 LOGLEVEL=info
