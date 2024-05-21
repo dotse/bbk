@@ -1,0 +1,6 @@
+*.d
+*.o
+src/cli/cli
+
+ # VSCode
+.vscode
