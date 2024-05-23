@@ -21,7 +21,6 @@ public:
                                    const std::string &msg) override;
     void setHeader(const std::string &hdr) {
         in_progress_task = true;
-        *out << hdr << std::flush;
         current_header = hdr;
     }
 private:

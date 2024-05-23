@@ -232,7 +232,7 @@ public:
     /// Convert s (seconds) to std::chrono::microseconds
     static std::chrono::microseconds toUs(double t) {
         auto us = static_cast<std::chrono::microseconds::rep>(1e6*t);
-	return std::chrono::microseconds(us);
+        return std::chrono::microseconds(us);
     }
 
     /// Return local time, formatted as 2023-10-14T09:38:47+0200

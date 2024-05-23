@@ -14,7 +14,7 @@ public:
     ThreadBridge(Task *agent = nullptr, double tick=0.05);
 
     /// API for client to send message to the agent.
-    void pushToAgent(const std::string &msg)
+    void pushToAgent(const std::string &msg);
 
     /// \brief
     /// API for client to retrieve next message from agent.
