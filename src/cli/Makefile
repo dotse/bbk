@@ -7,6 +7,9 @@ LOGLEVEL=info
 # Uncomment if GnuTLS version 3.5 or later is available
 # GNUTLS=1
 
+# Uncomment this to avoid creating new processes
+# NO_EXTERNAL_CMD=1
+
 SOURCES=../http/cookiefile.cpp \
 	main.cpp \
 	../measurement/wsdownloadtask.cpp \
@@ -21,7 +24,8 @@ else
 CLEAN += ../server/measurementserver.o ../server/ticketclient.o
 endif
 
-# CXXFLAGS += -m32 -I/usr/i686-linux-gnu/include/c++/8/i686-linux-gnu
-# LDFLAGS += -m32
+ifeq ($(NO_EXTERNAL_CMD),1)
+CXXFLAGS += -DNO_EXTERNAL_CMD
+endif
 
 include $(DIRLEVEL)/measurement/mk.inc

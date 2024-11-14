@@ -16,13 +16,65 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <fstream>
 
 #include "defs.h"
 #include "../http/httpclientconnection.h"
 
 namespace {
 
-#ifndef __APPLE__
+#ifdef __APPLE__
+#elif defined(NO_EXTERNAL_CMD)
+    std::string get_shell_value(std::string filename, std::string key) {
+        std::ifstream file(filename);
+        if (file) {
+            key += "=";
+            std::string line;
+            while (std::getline(file, line)) {
+                if (line.find(key) == 0) {
+                    std::string value = line.substr(key.size());
+                    if (value.size() > 1 && value[0] == '"' &&
+                        value[value.size() - 1] == '"') {
+                        return value.substr(1, value.size() - 2);
+                    }
+                    return value;
+                }
+            }
+        }
+        return std::string();
+    }
+
+    std::string get_os_identifier() {
+        std::string os_name = get_shell_value("/etc/os-release", "NAME");
+        if (!os_name.empty()) {
+            std::string os_version = get_shell_value("/etc/os-release", "VERSION");
+            if (!os_version.empty()) {
+                os_name += " " + os_version;
+            }
+        }
+        return os_name;
+    }
+
+    std::string get_arch_identifier() {
+#if defined(__aarch64__)
+        return "aarch64";
+#elif defined(__arm__) || defined(_M_ARM)
+        return "arm";
+#elif defined(__amd64__) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
+        return "x86_64";
+#elif defined(__i386) || defined(_M_IX86) || defined(__X86__) || defined(_X86_)
+        return "i386";
+#elif defined(mips) || defined(__mips__) || defined(__mips)
+        return "mips";
+#elif defined(__PPC64__) || defined(__ppc64__) || defined(_ARCH_PPC64)
+        return "powerpc64"
+#elif defined(__powerpc) || defined(__powerpc__) || defined(__powerpc64__) || defined(__POWERPC__) || defined(__ppc__) || defined(__PPC__) || defined(_ARCH_PPC)
+        return "powerpc";
+#else
+        return std::string();
+#endif
+    }
+#else
     std::string external_cmd(const char *cmd) {
         char buffer[200];
         std::string result;
@@ -124,6 +176,8 @@ namespace {
                 memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));     // "@ 2.50GHz"
         }
         return CPUBrandString;
+#elif defined(NO_EXTERNAL_CMD)
+        return get_arch_identifier();
 #else
         return external_cmd("uname -m").substr(0, 50);
 #endif
@@ -162,6 +216,9 @@ namespace {
 
 #elif defined(__APPLE__)
         osInfo = [[[NSProcessInfo processInfo] operatingSystemVersionString] UTF8String];
+
+#elif defined(NO_EXTERNAL_CMD)
+        osInfo = get_os_identifier();
 
 #else
         osInfo = external_cmd("uname -sr").substr(0, 50);
