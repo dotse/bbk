@@ -38,10 +38,9 @@ private:
     void do_output(double value, const char *msg, bool final = false);
     std::ostream *out;
     bool out_is_tty, out_quiet;
-    std::string limiter = " ";
     std::ostringstream current_line;
     std::string current_header;
-    bool out_is_tty, out_quiet;
+    std::string measurement_id;
     // Set to true during upload and download:
     bool in_progress_task = false;
     // It latency result arrives asynchronously during

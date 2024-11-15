@@ -32,7 +32,6 @@ CliClient::CliClient(const TaskConfig &config) :
 #else
     out_is_tty = isatty(fileno(stdout));
 #endif
-    limiter = the_config.value("limiter");
     out_quiet = (the_config.value("quiet") == "1" ||
                  the_config.value("logfile") == "-");
     if (!the_config.value("out").empty()) {
@@ -175,14 +174,15 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
                 if (the_config.value("quiet") != "1")
                     *out << "\n\nRESULT: ";
 
-                std::string measurement_id = arg_obj["MeasurementID"].string_value();
-                *out << measurement_id << limiter 
-                     << report.download << limiter
+                std::string limiter = the_config.value("limiter", " ");
+
+                *out << report.download << limiter
                      << report.upload << limiter
                      << report.latency << limiter
                      << report.measurement_server << limiter
                      << report.isp << limiter
-                     << report.ticket;
+                     << report.ticket << limiter
+                     << measurement_id;
                 if (report.rating.empty())
                     *out << std::endl;
                 else
@@ -347,9 +347,9 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
                      << "result: " << bmsg << std::endl;
         }
     } else if (event == "measurementInfo") {
-        std::string id = arg_obj["MeasurementID"].string_value();
-        if (!id.empty())
-            *out << "Measurement ID: " << id << std::endl;
+        measurement_id = arg_obj["MeasurementID"].string_value();
+        if (!measurement_id.empty())
+            *out << "Measurement ID: " << measurement_id << std::endl;
         std::string imsg = arg_obj["ispInfoMessage"].string_value();
         if (!imsg.empty() && imsg != report.msg)
             *out << "Message from service provider: " << imsg << std::endl;
