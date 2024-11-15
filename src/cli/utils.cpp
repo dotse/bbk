@@ -227,8 +227,8 @@ bool parseArgs(int argc, char *argv[],
                << "                      a secure one-time password will be generated.\n"
                << "\nCommand line interface:\n"
                << "  --quiet             Write a single line of output\n"
+               << "  --csv               Write a single line of output, comma separated\n"
                << "  --out=FILENAME      Append output to FILENAME instead of stdout\n"
-               << "  --csv               Write a single line as comma separated\n"
 #endif
                << std::endl;
             return false;

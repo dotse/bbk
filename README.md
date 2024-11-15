@@ -3,10 +3,6 @@
 The `src` directory contains the source code to the command line version of
 Bredbandskollen CLI, a bandwidth measurement tool.
 
-# Changes from dotse
-- CVS output
-
-
 # How to build Bredbandskollen's CLI client
 
 On Windows, open
