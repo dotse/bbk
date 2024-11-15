@@ -167,7 +167,6 @@ void CliClient::newEventFromAgent(std::deque<std::string> &return_msgs,
         std::string tst = arg_obj["task"].string_value();
         if (tst == "global") {
             if (out_quiet) {
- 
                 // Enable output:
                 out->clear(std::istream::goodbit);
 

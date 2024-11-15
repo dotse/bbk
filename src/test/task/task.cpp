@@ -54,7 +54,7 @@ namespace {
     private:
 	std::string timer_secret;
     };
- 
+
 }
 
 TEST(TaskTest, start1) {
