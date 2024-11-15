@@ -7,7 +7,7 @@
 #include <glib-unix.h>
 
 void GtkClient::run() {
-    app = gtk_application_new("bbk.iis.se", G_APPLICATION_FLAGS_NONE);
+    app = gtk_application_new("bbk.iis.se", G_APPLICATION_DEFAULT_FLAGS);
     g_signal_connect(app, "activate",
                      G_CALLBACK(GtkClient::activate), this);
     g_application_run(G_APPLICATION(app), 0, nullptr);
