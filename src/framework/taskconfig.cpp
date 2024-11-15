@@ -28,10 +28,10 @@ TaskConfig TaskConfig::load(const std::string &filename) {
     return TaskConfig(cfg_stream);
 }
 
-std::string TaskConfig::value(const std::string &key) const {
+std::string TaskConfig::value(const std::string &key, const std::string &default_value) const {
     auto range = the_config.equal_range(key);
     if (range.first == range.second)
-        return std::string();
+        return default_value;
     --range.second;
     return range.second->second;
 }

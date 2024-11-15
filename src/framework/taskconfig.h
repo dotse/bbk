@@ -106,8 +106,8 @@ public:
         return the_config;
     }
 
-    /// Return value of last occurence of key, or empty string.
-    std::string value(const std::string &key) const;
+    /// Return value of last occurence of key. Return default_value if key does not exist.
+    std::string value(const std::string &key, const std::string &default_value = "") const;
 
     /// Return true if key exists, otherwise false:
     bool hasKey(const std::string &key) const {
