@@ -4,7 +4,7 @@
 
 namespace measurement {
     extern const std::string appName;
-    const std::string appVersion = "1.2";
+    const std::string appVersion = "1.2.1";
     // buildVersion 15 released to App Store in 2016.
     const unsigned int buildVersion = 16;
     extern const std::string hw_info;
