@@ -2,7 +2,6 @@
 // Written by Göran Andersson <initgoran@gmail.com>
 
 #include <string.h>
-#include <sys/types.h>
 #ifdef _WIN32
 #include <winsock2.h>
 #else
