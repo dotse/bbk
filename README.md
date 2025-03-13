@@ -94,6 +94,16 @@ If GnuTLS version 3.5 or later is installed, including development files, do
     make clean
     make GNUTLS=1
 
+* OpenWrt
+
+OpenWrt is also Linux, but will generally include cross-compiling.
+
+See [here](https://openwrt.org/docs/guide-developer/toolchain/crosscompile) for setting up the OpenWrt toolchain and getting ready to compile.
+
+After setting the `STAGING_DIR` environment variable and adding the cross-compiler bin folder to `PATH`, note the name of the g++ executable there and run make with CXX set to it, e.g.:
+
+    make CXX=aarch64-openwrt-linux-musl-g++
+
 * OpenBSD
 
 Install gmake, llvm and gnutls using pkg_add, then go to src/cli and do
