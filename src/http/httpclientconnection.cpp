@@ -13,6 +13,12 @@
 #include "httpclienttask.h"
 #include "http_common.h"
 #include "sha1.h"
+#include <array>
+#include <unistd.h>
+#include <fcntl.h>
+#ifdef USE_GNUTLS
+#include <gnutls/crypto.h>
+#endif
 
 HttpClientConnection::HttpClientConnection(const std::string &label,
                                            HttpClientTask *task,
@@ -342,10 +348,21 @@ void HttpClientConnection::ws_get(const std::string &url) {
     static char dst[] {
         "01234567890123456789====258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
 
-    // 16 byte random data, convert to 24 base64 chars:
-    int32_t rnd[4] = { rand(), rand(), rand(), rand() };
-    const unsigned char *src = reinterpret_cast<const unsigned char *>(rnd);
-    base64_encode(src, sizeof(rnd), dst);
+    // 16-byte random data, convert to 24 base64 chars (RFC 6455)
+    std::array<unsigned char, 16> rnd{};
+#ifdef USE_GNUTLS
+    gnutls_rnd(GNUTLS_RND_NONCE, rnd.data(), rnd.size());
+#else
+    int fd = open("/dev/urandom", O_RDONLY);
+    if (fd >= 0) {
+        ssize_t n = read(fd, rnd.data(), rnd.size());
+        (void)n;
+        close(fd);
+    } else {
+        for (size_t i = 0; i < rnd.size(); ++i) rnd[i] = static_cast<unsigned char>(rand());
+    }
+#endif
+    base64_encode(rnd.data(), rnd.size(), dst);
 
     current_uri = url;
     current_request = "GET " + proto_hostname +
