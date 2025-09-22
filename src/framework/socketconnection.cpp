@@ -247,8 +247,12 @@ init_tls_client(gnutls_certificate_credentials_t &x509_cred, bool verify_cert) {
         gnutls_session_set_verify_cert(session, peer_ip.c_str(), 0);
     }
 
+#ifndef ALLOW_BROKEN_TLS
+    // Do not weaken verification by default
+#else
     gnutls_certificate_set_verify_flags (x509_cred,
                                          GNUTLS_VERIFY_ALLOW_BROKEN);
+#endif
 
     gnutls_handshake_set_timeout(session,
                                  GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
