@@ -56,8 +56,8 @@ CXXFLAGS += --pedantic -Wextra
 endif
 
 ifeq ($(GNUTLS),1)
-CXXFLAGS += -DUSE_GNUTLS -I/usr/local/include
-LIBS += -L/usr/local/lib -lgnutls
+CXXFLAGS += -DUSE_GNUTLS $(shell pkg-config --cflags gnutls)
+LIBS += $(shell pkg-config --libs gnutls)
 endif
 ifeq ($(THREADS),1)
 CXXFLAGS += -DUSE_THREADS
