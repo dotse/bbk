@@ -31,6 +31,9 @@ void EventLoop::signalHandler(int signum) {
 
 #include "socketreceiver.h"
 #include "workerprocess.h"
+#include <dirent.h>
+#include <sys/resource.h>
+#include <cstdlib>
 
 #ifdef USE_THREADS
 thread_local
