@@ -3,6 +3,12 @@
 
 #include "wsuploadtask.h"
 #include <vector>
+#include <fcntl.h>
+#include <unistd.h>
+#ifdef USE_GNUTLS
+#include <gnutls/crypto.h>
+#endif
+#include <array>
 
 WsUploadTask::WsUploadTask(const std::string &ticket, const HttpHost &server,
                        unsigned int no_conn, unsigned int max_conn,
@@ -27,7 +33,17 @@ namespace {
         std::vector<char> buf;
         // Fill the buffer with dummy data that cannot cause data compression
         while (len) {
-            buf.push_back(static_cast<char>(rand()));
+#ifdef USE_GNUTLS
+            unsigned char x;
+            gnutls_rnd(GNUTLS_RND_NONCE, &x, 1);
+            buf.push_back(static_cast<char>(x));
+#else
+            int fd = open("/dev/urandom", O_RDONLY);
+            unsigned char x;
+            if (fd >= 0) { read(fd, &x, 1); close(fd); }
+            else { x = static_cast<unsigned char>(rand()); }
+            buf.push_back(static_cast<char>(x));
+#endif
             --len;
         }
         return buf;
