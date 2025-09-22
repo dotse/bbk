@@ -23,6 +23,14 @@
 #endif
 
 #include <fcntl.h>
+
+static inline void set_cloexec(int fd) {
+    if (fd >= 0) {
+        int flags = fcntl(fd, F_GETFD);
+        if (flags != -1) fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+    }
+}
+
 #include <sys/types.h>
 
 #include <cstdlib>
@@ -56,8 +64,10 @@ Socket::Socket(const std::string &label, Task *owner,
         } else {
             _socket = pair_sd[0];
             unix_domain_peer = pair_sd[1];
+            set_cloexec(_socket);
+            set_cloexec(unix_domain_peer);
             fcntl(pair_sd[0], F_SETFL, O_NONBLOCK|O_CLOEXEC);
-            fcntl(pair_sd[1], F_SETFL, O_NONBLOCK);
+            fcntl(pair_sd[1], F_SETFL, O_NONBLOCK|O_CLOEXEC);
         }
         return;
     }
