@@ -81,7 +81,20 @@ namespace {
 #ifdef _WIN32
         std::shared_ptr<FILE> pipe(_popen(cmd, "r"), _pclose);
 #else
+        #ifdef NO_EXTERNAL_CMD
+        (void)cmd;
+        return std::string();
+#else
+        // Basic guard: reject characters that imply shell metacharacters
+        for (const char *p = cmd; *p; ++p) {
+            switch (*p) {
+                case ';': case '|': case '&': case '`': case '$':
+                case '>': case '<': case '\n': case '\r':
+                    return std::string();
+            }
+        }
         std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+#endif
 #endif
         if (pipe) {
             while (!feof(pipe.get()))
