@@ -22,6 +22,7 @@
 // Modified by Göran Andersson <goran@init.se>
 
 #include "json11.hpp"
+#include <cstdint>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
@@ -98,13 +99,15 @@ static void dump(const string &value, string &out) {
             out += "\\t";
         } else if (static_cast<uint8_t>(ch) <= 0x1f) {
             char buf[8];
-            snprintf(buf, sizeof buf, "\\u%04x", ch);
+            snprintf(buf, sizeof buf, "\\u%04x", static_cast<unsigned int>(static_cast<unsigned char>(ch)));
             out += buf;
-        } else if (static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
+        } else if (i + 2 < value.size()
+                   && static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
                    && static_cast<uint8_t>(value[i+2]) == 0xa8) {
             out += "\\u2028";
             i += 2;
-        } else if (static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
+        } else if (i + 2 < value.size()
+                   && static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
                    && static_cast<uint8_t>(value[i+2]) == 0xa9) {
             out += "\\u2029";
             i += 2;
