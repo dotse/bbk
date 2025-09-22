@@ -79,9 +79,30 @@ int EventLoop::externalCommand(Task *owner, const char *const argv[]) {
         return -1;
     }
     if (!chld) {
-        // TODO: Close all file descriptors in child!
+        // Close all file descriptors >= 3 in the child before exec
+        #if defined(__linux__) && !defined(_WIN32)
+        // Best effort: use /proc/self/fd
+        {
+            DIR *d = opendir("/proc/self/fd");
+            if (d) {
+                int dirfd_no = dirfd(d);
+                struct dirent *de;
+                while ((de = readdir(d))) {
+                    int fd = atoi(de->d_name);
+                    if (fd > 2 && fd != dirfd_no) close(fd);
+                }
+                closedir(d);
+            }
+        }
+        #else
+        // Fallback: close up to RLIMIT_NOFILE
+        struct rlimit rl;
+        if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+            for (int fd = 3; fd < (int)rl.rlim_cur; ++fd) close(fd);
+        }
+        #endif
         int ret = execvp( argv[0], const_cast<char **>(argv) );
-        exit(ret);
+        _exit(ret);
     }
     pidOwner[chld] = owner;
     return chld;
